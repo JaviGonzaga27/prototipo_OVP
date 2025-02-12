@@ -3,6 +3,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuestionnaire } from '../../context/QuestionnaireContext';
 
+import { 
+  AcademicCapIcon, 
+  ChartBarIcon, 
+  LightBulbIcon, 
+  DocumentTextIcon 
+} from '@heroicons/react/24/solid';
+
 const careerGroups = [
   {
     name: "Tecnología",
@@ -96,28 +103,41 @@ const Results = () => {
   }, [state.answers]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="bg-white shadow-lg rounded-lg p-8">
-        <h1 className="text-3xl font-bold mb-6 text-center text-indigo-600">
-          Resultados de Tu Test Vocacional
-        </h1>
-        <div className="grid md:grid-cols-2 gap-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden">
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8 text-center">
+          <h1 className="text-4xl font-bold mb-4">Resultados de Tu Test Vocacional</h1>
+          <p className="text-xl text-indigo-100">Descubre tu camino profesional</p>
+        </div>
+  
+        <div className="grid md:grid-cols-2 gap-8 p-8">
+          {/* Carreras Recomendadas */}
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Top 3 Carreras Recomendadas</h2>
+            <div className="flex items-center mb-6">
+              <AcademicCapIcon className="h-8 w-8 text-indigo-600 mr-3" />
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Top 3 Carreras Recomendadas
+              </h2>
+            </div>
             {topCareers.map((career, index) => (
               <div 
                 key={career.name} 
-                className="mb-4 p-4 bg-gray-100 rounded-lg"
+                className="mb-6 p-5 bg-gray-100 rounded-xl transform transition-all hover:scale-105 hover:shadow-lg"
               >
-                <div className="flex justify-between items-center">
-                  <span className="font-bold">{index + 1}. {career.name}</span>
+                <div className="flex justify-between items-center mb-3">
+                  <div className="flex items-center">
+                    <span className="mr-3 text-xl font-bold text-indigo-600">
+                      {index + 1}
+                    </span>
+                    <span className="font-bold text-gray-800">{career.name}</span>
+                  </div>
                   <span className="text-indigo-600 font-semibold">
-                    {career.percentage}% Coincidencia
+                    {career.percentage}%
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                <div className="w-full bg-gray-300 rounded-full h-3">
                   <div 
-                    className="bg-indigo-600 h-2.5 rounded-full" 
+                    className="bg-indigo-600 h-3 rounded-full transition-all duration-500" 
                     style={{width: `${career.percentage}%`}}
                   ></div>
                 </div>
@@ -125,19 +145,27 @@ const Results = () => {
             ))}
           </div>
   
+          {/* Estadísticas de Intereses */}
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Estadísticas de Intereses</h2>
+            <div className="flex items-center mb-6">
+              <ChartBarIcon className="h-8 w-8 text-purple-600 mr-3" />
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Estadísticas de Intereses
+              </h2>
+            </div>
             {Object.entries(statistics).map(([key, value]) => (
-              <div key={key} className="mb-4">
-                <div className="flex justify-between mb-1">
-                  <span className="text-base font-medium text-capitalize">
+              <div key={key} className="mb-6">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-base font-medium text-gray-700 capitalize">
                     {key.charAt(0).toUpperCase() + key.slice(1)}
                   </span>
-                  <span className="text-sm font-medium">{value}%</span>
+                  <span className="text-sm font-semibold text-indigo-600">
+                    {value}%
+                  </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div className="w-full bg-gray-300 rounded-full h-3">
                   <div 
-                    className="bg-indigo-600 h-2.5 rounded-full" 
+                    className="bg-purple-600 h-3 rounded-full transition-all duration-500" 
                     style={{width: `${value}%`}}
                   ></div>
                 </div>
@@ -146,13 +174,56 @@ const Results = () => {
           </div>
         </div>
   
-        <div className="text-center mt-8">
-          <button
-            onClick={() => navigate('/profile')}
-            className="bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 transition-colors"
-          >
-            Ir a Mi Perfil
-          </button>
+        {/* Sección de Recomendaciones */}
+        <div className="bg-gray-50 p-8">
+          <div className="flex items-center mb-6">
+            <LightBulbIcon className="h-8 w-8 text-yellow-500 mr-3" />
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Recomendaciones Personalizadas
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
+              <h3 className="font-bold text-lg mb-3 text-gray-800">
+                Próximos Pasos
+              </h3>
+              <ul className="space-y-2 text-gray-600">
+                <li>• Investigar programas universitarios</li>
+                <li>• Contactar con profesionales del área</li>
+                <li>• Realizar cursos introductorios</li>
+              </ul>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
+              <h3 className="font-bold text-lg mb-3 text-gray-800">
+                Recursos Adicionales
+              </h3>
+              <ul className="space-y-2 text-gray-600">
+                <li>• Guías vocacionales online</li>
+                <li>• Ferias universitarias</li>
+                <li>• Orientación profesional</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+  
+        {/* Botones de Acción */}
+        <div className="bg-white p-8 text-center">
+          <div className="flex justify-center space-x-4">
+            <button
+              onClick={() => navigate('/profile')}
+              className="flex items-center bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+            >
+              <DocumentTextIcon className="h-6 w-6 mr-2" />
+              Ir a Mi Perfil
+            </button>
+            <button
+              onClick={() => {/* Acción de compartir */}}
+              className="flex items-center bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              <DocumentTextIcon className="h-6 w-6 mr-2" />
+              Compartir Resultados
+            </button>
+          </div>
         </div>
       </div>
     </div>

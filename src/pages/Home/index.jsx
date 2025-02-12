@@ -1,15 +1,22 @@
-// src/pages/Home/index.jsx
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { 
+  ClipboardDocumentListIcon, 
+  ChartBarSquareIcon, 
+  AcademicCapIcon,
+  ArrowRightIcon
+} from '@heroicons/react/24/outline';
 
 const FeatureCard = ({ icon: Icon, title, description }) => {
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg text-center">
-      <div className="flex justify-center mb-4">
-        <Icon className="w-10 h-10 text-indigo-500" />
+    <div className="p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+      <div className="flex justify-center mb-6">
+        <div className="p-3 bg-indigo-100 rounded-xl">
+          <Icon className="w-8 h-8 text-indigo-600" />
+        </div>
       </div>
-      <h3 className="text-xl font-bold mb-4">{title}</h3>
-      <p className="text-gray-600">{description}</p>
+      <h3 className="text-xl font-bold mb-4 text-gray-800">{title}</h3>
+      <p className="text-gray-600 leading-relaxed">{description}</p>
     </div>
   );
 };
@@ -24,44 +31,73 @@ const Home = () => {
   const navigate = useNavigate();
 
   return (
-    <main>
-      <div className="bg-indigo-600 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold mb-6">
-            Descubre Tu Vocación Profesional
-          </h1>
-          <p className="text-xl mb-8">
-            Te ayudamos a encontrar el camino profesional que mejor se adapte a tus intereses y habilidades
-          </p>
-          <button 
-            onClick={() => navigate('/questionnaire')}
-            className="bg-white text-indigo-600 px-8 py-3 rounded-md font-medium hover:bg-gray-100 transition-colors"
-          >
-            Comenzar Test Vocacional
-          </button>
+    <main className="bg-gradient-to-b from-indigo-50 to-white min-h-screen">
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+        <div className="absolute inset-0 bg-pattern opacity-10"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative">
+          <div className="max-w-3xl">
+            <h1 className="text-5xl font-extrabold mb-6 leading-tight">
+              Descubre Tu Verdadero
+              <span className="block text-indigo-200">Camino Profesional</span>
+            </h1>
+            <p className="text-xl mb-10 text-indigo-100 leading-relaxed">
+              Explora tus talentos y encuentra la carrera perfecta con nuestro test vocacional 
+              personalizado. Toma decisiones informadas sobre tu futuro profesional.
+            </p>
+            <button 
+              onClick={() => navigate('/questionnaire')}
+              className="group inline-flex items-center bg-white text-indigo-600 px-8 py-4 rounded-xl font-semibold hover:bg-indigo-50 transition-all duration-300 shadow-md hover:shadow-lg"
+            >
+              Comenzar Test Vocacional
+              <ArrowRightIcon className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <h2 className="text-3xl font-bold text-center mb-12">
-          ¿Cómo Funciona?
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+      {/* Features Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            Proceso Simple, Resultados Poderosos
+          </h2>
+          <p className="text-lg text-gray-600">
+            Nuestro proceso está diseñado para ayudarte a descubrir tu verdadera vocación
+            de manera efectiva y personalizada.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <FeatureCard
-            icon={() => <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd"/></svg>}
+            icon={ClipboardDocumentListIcon}
             title="Completa el Cuestionario"
-            description="Responde preguntas diseñadas para conocer tus intereses, habilidades y preferencias profesionales"
+            description="Responde a preguntas cuidadosamente diseñadas para entender tus intereses, habilidades y aspiraciones profesionales."
           />
           <FeatureCard
-            icon={() => <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/></svg>}
+            icon={ChartBarSquareIcon}
             title="Análisis Personalizado"
-            description="Nuestro sistema analiza tus respuestas utilizando algoritmos avanzados"
+            description="Nuestro sistema analiza tus respuestas utilizando algoritmos avanzados para identificar tus áreas de mayor potencial."
           />
           <FeatureCard
-            icon={() => <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/></svg>}
+            icon={AcademicCapIcon}
             title="Recibe Recomendaciones"
-            description="Obtén sugerencias de carreras y áreas profesionales que mejor se ajusten a tu perfil"
+            description="Obtén recomendaciones detalladas de carreras y áreas profesionales que mejor se alineen con tu perfil único."
           />
+        </div>
+
+        {/* Call to Action */}
+        <div className="mt-20 text-center">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">
+            ¿Listo para descubrir tu vocación?
+          </h3>
+          <button 
+            onClick={() => navigate('/questionnaire')}
+            className="inline-flex items-center bg-indigo-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg"
+          >
+            Empezar Ahora
+            <ArrowRightIcon className="w-5 h-5 ml-2" />
+          </button>
         </div>
       </div>
     </main>
