@@ -53,7 +53,7 @@ const Navbar = () => {
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
                   <ChartBarIcon className="h-8 w-8 text-white" />
-                  <span className="text-white font-bold text-lg">VocaTest</span>
+                  <span className="text-white font-bold text-lg">Prototipo OVP</span>
                 </div>
                 
                 {/* Enlaces de navegación */}
