@@ -154,6 +154,21 @@ function Questionnaire() {
   ];
 
   const handleAnswer = (answer) => {
+    // Guarda la respuesta completa, no solo el texto
+    dispatch({
+      type: 'SET_ANSWER',
+      questionId: state.currentQuestion,
+      answer: {
+        text: answer.text,
+        categories: answer.categories // Asegúrate de incluir las categorías
+      }
+    });
+    
+    console.log('Respuesta guardada:', {
+      questionId: state.currentQuestion,
+      answer: answer
+    });
+    
     setCurrentAnswer(answer.text);
     setShowMotivation(true);
     setTimeout(() => setShowMotivation(false), 2000);
@@ -162,17 +177,39 @@ function Questionnaire() {
   const handleFinishQuestionnaire = () => {
     // Guardar la última respuesta
     if (currentAnswer) {
+      const currentQuestionData = questions[state.currentQuestion];
+      const selectedOption = currentQuestionData.options.find(
+        opt => opt.text === currentAnswer
+      );
+  
       dispatch({
         type: 'SET_ANSWER',
         questionId: state.currentQuestion,
-        answer: currentAnswer
+        answer: {
+          text: currentAnswer,
+          categories: selectedOption.categories
+        }
       });
     }
-
+  
+    // Log para debug
+    console.log('Estado de respuestas antes de calcular:', state.answers);
+  
+    // Convertir las respuestas a array con la estructura correcta
+    const answersArray = questions.map((_, index) => {
+      const answer = state.answers[index];
+      return answer; // Esto ya debería incluir text y categories
+    }).filter(answer => answer !== null);
+  
+    console.log('Array de respuestas procesado:', answersArray);
+  
     // Calcular resultados
-    const categoryScores = calculateResults(Object.values(state.answers));
+    const categoryScores = calculateResults(answersArray);
+    console.log('Puntajes calculados:', categoryScores);
+  
     const recommendedCareers = getRecommendedCareers(categoryScores);
-    
+    console.log('Carreras recomendadas:', recommendedCareers);
+  
     dispatch({
       type: 'SET_RESULTS',
       results: {
@@ -180,14 +217,14 @@ function Questionnaire() {
         careers: recommendedCareers
       }
     });
-
+  
     // Efecto de confetti
     confetti({
       particleCount: 100,
       spread: 70,
       origin: { y: 0.6 }
     });
-    
+  
     navigate('/results');
   };
 

@@ -28,5 +28,4 @@ export const careers = {
         jobOpportunities: ["Diseñador UI/UX", "Director de Arte Digital", "Motion Designer"]
       }
     ],
-    // ... más carreras por categoría
   };
