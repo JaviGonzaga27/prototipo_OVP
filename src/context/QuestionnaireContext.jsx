@@ -5,54 +5,63 @@ import PropTypes from 'prop-types';
 const QuestionnaireContext = createContext();
 
 const initialState = {
-  answers: {},
-  currentQuestion: 0,
-  results: null
+ answers: {},
+ currentQuestion: 0,
+ results: null
 };
 
 function reducer(state, action) {
-  switch (action.type) {
-    case 'SET_ANSWER':
-      return {
-        ...state,
-        answers: {
-          ...state.answers,
-          [action.questionId]: action.answer
-        }
-      };
-    case 'SET_CURRENT_QUESTION':
-      return {
-        ...state,
-        currentQuestion: action.questionId
-      };
-    case 'SET_RESULTS':
-      return {
-        ...state,
-        results: action.results
-      };
-    default:
-      return state;
-  }
+ switch (action.type) {
+   case 'SET_ANSWER':
+     return {
+       ...state,
+       answers: {
+         ...state.answers,
+         [action.questionId]: action.answer
+       }
+     };
+   case 'SET_CURRENT_QUESTION':
+     return {
+       ...state,
+       currentQuestion: action.questionId
+     };
+   case 'SET_RESULTS':
+     return {
+       ...state,
+       results: action.results
+     };
+   case 'RESET_QUESTIONNAIRE':
+     return initialState;
+   default:
+     throw new Error(`Unhandled action type: ${action.type}`);
+ }
 }
 
 export function QuestionnaireProvider({ children }) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+ const [state, dispatch] = useReducer(reducer, initialState);
 
-  return (
-    <QuestionnaireContext.Provider value={{ state, dispatch }}>
-      {children}
-    </QuestionnaireContext.Provider>
-  );
+ const value = {
+   state,
+   dispatch
+ };
+
+ return (
+   <QuestionnaireContext.Provider value={value}>
+     {children}
+   </QuestionnaireContext.Provider>
+ );
 }
 
 QuestionnaireProvider.propTypes = {
-  children: PropTypes.node.isRequired
+ children: PropTypes.node.isRequired
 };
 
 export function useQuestionnaire() {
-  const context = useContext(QuestionnaireContext);
-  if (!context) {
-    throw new Error('useQuestionnaire debe usarse dentro de un QuestionnaireProvider');
-  }
-  return context;
+ const context = useContext(QuestionnaireContext);
+ if (context === undefined) {
+   throw new Error('useQuestionnaire must be used within a QuestionnaireProvider');
+ }
+ return context;
 }
+
+export { QuestionnaireContext };

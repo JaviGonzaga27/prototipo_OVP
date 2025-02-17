@@ -1,23 +1,20 @@
+// src/pages/Home/index.jsx
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { 
-  ClipboardDocumentListIcon, 
-  ChartBarSquareIcon, 
-  AcademicCapIcon,
-  ArrowRightIcon
-} from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion'; // Necesitarás instalar framer-motion
 
 const FeatureCard = ({ icon: Icon, title, description }) => {
   return (
-    <div className="p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-      <div className="flex justify-center mb-6">
-        <div className="p-3 bg-indigo-100 rounded-xl">
-          <Icon className="w-8 h-8 text-indigo-600" />
-        </div>
+    <motion.div 
+      whileHover={{ scale: 1.05 }}
+      className="p-6 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl shadow-lg text-white"
+    >
+      <div className="flex justify-center mb-4">
+        <Icon className="w-12 h-12 text-white" />
       </div>
-      <h3 className="text-xl font-bold mb-4 text-gray-800">{title}</h3>
-      <p className="text-gray-600 leading-relaxed">{description}</p>
-    </div>
+      <h3 className="text-xl font-bold mb-4">{title}</h3>
+      <p className="text-gray-100">{description}</p>
+    </motion.div>
   );
 };
 
@@ -31,77 +28,140 @@ const Home = () => {
   const navigate = useNavigate();
 
   return (
-    <main className="bg-gradient-to-b from-indigo-50 to-white min-h-screen">
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-        <div className="absolute inset-0 bg-pattern opacity-10"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl font-extrabold mb-6 leading-tight">
-              Descubre Tu Verdadero
-              <span className="block text-indigo-200">Camino Profesional</span>
+    <main className="bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen">
+      <div className="bg-gradient-to-r from-violet-600 to-purple-600 text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-5xl font-bold mb-6">
+              ¡Descubre Tu Futuro! 🚀
             </h1>
-            <p className="text-xl mb-10 text-indigo-100 leading-relaxed">
-              Explora tus talentos y encuentra la carrera perfecta con nuestro test vocacional 
-              personalizado. Toma decisiones informadas sobre tu futuro profesional.
+            <p className="text-xl mb-8">
+              ¿No sabes qué estudiar? ¡Tranqui! Te ayudamos a encontrar tu camino ideal 
+              con un test super cool 😎
             </p>
-            <button 
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/questionnaire')}
-              className="group inline-flex items-center bg-white text-indigo-600 px-8 py-4 rounded-xl font-semibold hover:bg-indigo-50 transition-all duration-300 shadow-md hover:shadow-lg"
+              className="bg-white text-purple-600 px-8 py-4 rounded-full font-medium hover:bg-gray-100 transition-colors text-lg shadow-lg"
             >
-              Comenzar Test Vocacional
-              <ArrowRightIcon className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
+              ¡Comenzar el Test! 🎯
+            </motion.button>
+          </motion.div>
         </div>
       </div>
 
-      {/* Features Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
-            Proceso Simple, Resultados Poderosos
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <h2 className="text-4xl font-bold text-center mb-12 text-white">
+            ¿Cómo Funciona? 🤔
           </h2>
-          <p className="text-lg text-gray-600">
-            Nuestro proceso está diseñado para ayudarte a descubrir tu verdadera vocación
-            de manera efectiva y personalizada.
-          </p>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <FeatureCard
+              icon={() => <span className="text-4xl">📝</span>}
+              title="¡Responde el Test!"
+              description="Un test super fácil y divertido para conocer tus gustos y talentos"
+            />
+            <FeatureCard
+              icon={() => <span className="text-4xl">🎯</span>}
+              title="¡Obtén tu Match!"
+              description="Nuestro sistema encontrará las carreras que mejor van contigo"
+            />
+            <FeatureCard
+              icon={() => <span className="text-4xl">🌟</span>}
+              title="¡Explora tus Opciones!"
+              description="Descubre todo sobre las carreras que te recomendamos"
+            />
+          </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <FeatureCard
-            icon={ClipboardDocumentListIcon}
-            title="Completa el Cuestionario"
-            description="Responde a preguntas cuidadosamente diseñadas para entender tus intereses, habilidades y aspiraciones profesionales."
-          />
-          <FeatureCard
-            icon={ChartBarSquareIcon}
-            title="Análisis Personalizado"
-            description="Nuestro sistema analiza tus respuestas utilizando algoritmos avanzados para identificar tus áreas de mayor potencial."
-          />
-          <FeatureCard
-            icon={AcademicCapIcon}
-            title="Recibe Recomendaciones"
-            description="Obtén recomendaciones detalladas de carreras y áreas profesionales que mejor se alineen con tu perfil único."
-          />
-        </div>
-
-        {/* Call to Action */}
-        <div className="mt-20 text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">
-            ¿Listo para descubrir tu vocación?
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mt-20 text-center"
+        >
+          <h3 className="text-2xl font-bold text-white mb-6">
+            ¡Únete a miles de estudiantes que ya encontraron su camino! 🎓
           </h3>
-          <button 
-            onClick={() => navigate('/questionnaire')}
-            className="inline-flex items-center bg-indigo-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg"
-          >
-            Empezar Ahora
-            <ArrowRightIcon className="w-5 h-5 ml-2" />
-          </button>
+          <div className="flex justify-center space-x-4">
+            <div className="bg-purple-700 px-6 py-3 rounded-lg text-white">
+              <span className="text-2xl font-bold">10k+</span>
+              <p>Estudiantes</p>
+            </div>
+            <div className="bg-purple-700 px-6 py-3 rounded-lg text-white">
+              <span className="text-2xl font-bold">95%</span>
+              <p>Satisfacción</p>
+            </div>
+            <div className="bg-purple-700 px-6 py-3 rounded-lg text-white">
+              <span className="text-2xl font-bold">50+</span>
+              <p>Carreras</p>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Sección de Testimonios */}
+      <div className="bg-gray-900 py-20">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-white mb-12">
+            Lo que dicen otros estudiantes 💭
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 * index }}
+                className="bg-gray-800 p-6 rounded-xl text-white"
+              >
+                <p className="text-lg mb-4">{testimonial.text}</p>
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center mr-3">
+                    {testimonial.avatar}
+                  </div>
+                  <div>
+                    <p className="font-bold">{testimonial.name}</p>
+                    <p className="text-gray-400">{testimonial.career}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </main>
   );
 };
+
+const testimonials = [
+  {
+    text: "¡El test me ayudó muchísimo! Ahora estoy super segura de lo que quiero estudiar 💪",
+    name: "Ana García",
+    career: "Futura Diseñadora",
+    avatar: "👩"
+  },
+  {
+    text: "Estaba super perdido, pero después del test todo se aclaró. ¡100% recomendado! 🙌",
+    name: "Carlos López",
+    career: "Futuro Ingeniero",
+    avatar: "👨"
+  },
+  {
+    text: "La mejor decisión que tomé fue hacer este test. ¡Me encantaron las recomendaciones! ⭐",
+    name: "María Rodríguez",
+    career: "Futura Psicóloga",
+    avatar: "👩"
+  }
+];
 
 export default Home;
