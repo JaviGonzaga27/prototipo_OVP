@@ -40,8 +40,7 @@ const Home = () => {
               ¡Descubre Tu Futuro! 🚀
             </h1>
             <p className="text-xl mb-8">
-              ¿No sabes qué estudiar? ¡Tranqui! Te ayudamos a encontrar tu camino ideal 
-              con un test super cool 😎
+              ¿No sabes qué estudiar? ¡Tranquilo! Te ayudamos a encontrar tu camino ideal.
             </p>
             <motion.button 
               whileHover={{ scale: 1.05 }}
