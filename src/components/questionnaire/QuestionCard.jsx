@@ -42,7 +42,8 @@ const QuestionCard = ({ question, onAnswer, onNext, onPrevious, isLast, currentQ
                 name="questionOption"
                 value={option}
                 checked={selectedValue === option}
-                onChange={(e) => setSelectedValue(e.target.value)}
+                onChange = {() => onAnswer(option)}
+                //onChange={(e) => setSelectedValue(e.target.value)}
                 className="h-4 w-4 text-indigo-600"
               />
               <span className="ml-3">{option}</span>

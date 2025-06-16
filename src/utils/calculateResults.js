@@ -22,6 +22,7 @@ export function calculateResults(answers) {
     diseño: 0,
     administracion: 0
   };
+  
 
   // Contador para cada categoría
   const categoryCount = {};
@@ -41,6 +42,7 @@ export function calculateResults(answers) {
     }
   });
 
+  
   // Calcular porcentajes basados en el máximo posible para cada categoría
   Object.keys(categoryScores).forEach(category => {
     if (categoryCount[category] > 0) {
@@ -89,13 +91,7 @@ const handleFinishQuestionnaire = () => {
   }
 
   // Convertir las respuestas del estado a un array de opciones con sus categorías
-  const answersArray = questions.map((question, index) => {
-    const answerText = state.answers[index];
-    if (!answerText) return null;
-    
-    // Encontrar la opción seleccionada que contiene las categorías
-    return question.options.find(opt => opt.text === answerText);
-  }).filter(answer => answer !== null); // Eliminar respuestas nulas
+  const answersArray = Object.values(state.answers).filter(answer => answer !== null); // Eliminar respuestas nulas
 
   // Verificar que tengamos respuestas para procesar
   if (answersArray.length === 0) {

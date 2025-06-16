@@ -175,41 +175,56 @@ function Questionnaire() {
   };
 
   const handleFinishQuestionnaire = () => {
-    // Guardar la última respuesta
-    if (currentAnswer) {
-      const currentQuestionData = questions[state.currentQuestion];
-      const selectedOption = currentQuestionData.options.find(
-        opt => opt.text === currentAnswer
-      );
+    
+    // // Guardar la última respuesta
+    // if (currentAnswer) {
+    //   const currentQuestionData = questions[state.currentQuestion];
+    //   const selectedOption = currentQuestionData.options.find(
+    //     opt => opt.text === currentAnswer
+    //   );
   
-      dispatch({
-        type: 'SET_ANSWER',
-        questionId: state.currentQuestion,
-        answer: {
-          text: currentAnswer,
-          categories: selectedOption.categories
-        }
-      });
-    }
+    //   dispatch({
+    //     type: 'SET_ANSWER',
+    //     questionId: state.currentQuestion,
+    //     answer: {
+    //       text: currentAnswer,
+    //       categories: selectedOption.categories
+    //     }
+    //   });
+    // }
   
-    // Log para debug
-    console.log('Estado de respuestas antes de calcular:', state.answers);
+    // // Log para debug
+    // console.log('Estado de respuestas antes de calcular:', state.answers);
   
-    // Convertir las respuestas a array con la estructura correcta
-    const answersArray = questions.map((_, index) => {
-      const answer = state.answers[index];
-      return answer; // Esto ya debería incluir text y categories
-    }).filter(answer => answer !== null);
+    // // Convertir las respuestas a array con la estructura correcta
+    // const answersArray = questions.map((_, index) => {
+    //   const answer = state.answers[index];
+    //   return answer; // Esto ya debería incluir text y categories
+    // }).filter(answer => answer !== null);
   
-    console.log('Array de respuestas procesado:', answersArray);
+    // console.log('Array de respuestas procesado:', answersArray);
   
-    // Calcular resultados
+    // // Calcular resultados
+    // const categoryScores = calculateResults(answersArray);
+    // console.log('Puntajes calculados:', categoryScores);
+  
+    // const recommendedCareers = getRecommendedCareers(categoryScores);
+    // console.log('Carreras recomendadas:', recommendedCareers);
+  
+    // dispatch({
+    //   type: 'SET_RESULTS',
+    //   results: {
+    //     categoryScores,
+    //     careers: recommendedCareers
+    //   }
+    // });
+
+    const answersArray = questions.map((_, index) => state.answers[index])
+    .filter(answer => answer !== undefined);
+
     const categoryScores = calculateResults(answersArray);
-    console.log('Puntajes calculados:', categoryScores);
-  
     const recommendedCareers = getRecommendedCareers(categoryScores);
-    console.log('Carreras recomendadas:', recommendedCareers);
-  
+
     dispatch({
       type: 'SET_RESULTS',
       results: {
@@ -230,12 +245,6 @@ function Questionnaire() {
 
   const handleNext = () => {
     if (currentAnswer) {
-      dispatch({
-        type: 'SET_ANSWER',
-        questionId: state.currentQuestion,
-        answer: currentAnswer
-      });
-
       if (state.currentQuestion === questions.length - 1) {
         handleFinishQuestionnaire();
       } else {
