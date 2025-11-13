@@ -5,7 +5,9 @@ import {
   UserCircleIcon, 
   ArrowRightOnRectangleIcon,
   ClipboardDocumentListIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  Cog6ToothIcon,
+  ClockIcon
 } from '@heroicons/react/24/outline';
 
 import PropTypes from 'prop-types';
@@ -69,10 +71,22 @@ const Navbar = () => {
                     text="Test" 
                   />
                   <NavLink 
+                    to="/test-history" 
+                    icon={ClockIcon} 
+                    text="Historial" 
+                  />
+                  <NavLink 
                     to="/profile" 
                     icon={UserCircleIcon} 
                     text="Perfil" 
                   />
+                  {user.role === 'admin' && (
+                    <NavLink 
+                      to="/admin" 
+                      icon={Cog6ToothIcon} 
+                      text="Admin" 
+                    />
+                  )}
                 </div>
               </div>
 
@@ -98,7 +112,7 @@ const Navbar = () => {
       {/* Menú móvil */}
       {user && (
         <div className="md:hidden border-t border-white/10">
-          <div className="flex justify-around py-2">
+          <div className="grid grid-cols-4 gap-1 py-2 px-2">
             <NavLink 
               to="/" 
               icon={HomeIcon} 
@@ -110,10 +124,24 @@ const Navbar = () => {
               text="Test" 
             />
             <NavLink 
+              to="/test-history" 
+              icon={ClockIcon} 
+              text="Historial" 
+            />
+            <NavLink 
               to="/profile" 
               icon={UserCircleIcon} 
               text="Perfil" 
             />
+            {user.role === 'admin' && (
+              <div className="col-span-4 mt-1">
+                <NavLink 
+                  to="/admin" 
+                  icon={Cog6ToothIcon} 
+                  text="Admin" 
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

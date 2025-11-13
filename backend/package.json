@@ -1,0 +1,33 @@
+{
+  "name": "ovp-backend",
+  "version": "1.0.0",
+  "description": "Backend para sistema de orientación vocacional",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "create-db": "node scripts/createDB.js",
+    "init-db": "node scripts/initDatabase.js"
+  },
+  "keywords": [
+    "express",
+    "mongodb",
+    "authentication"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-win32-x64-msvc": "^4.53.2"
+  }
+}

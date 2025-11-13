@@ -8,6 +8,9 @@ import Login from "./pages/Login";
 import Questionnaire from "./pages/Questionnaire";
 import Results from "./pages/Results";
 import Profile from "./pages/Profile";
+import Admin from "./pages/Admin";
+import TestHistory from "./pages/TestHistory";
+import TestResultDetail from "./pages/TestResultDetail";
 import { QuestionnaireProvider } from "./context/QuestionnaireContext";
 
 function App() {
@@ -16,7 +19,6 @@ function App() {
       <QuestionnaireProvider>
       <Router>
         <div className="min-h-screen bg-gray-50">
-        {console.log('App rendering')}
           <Navbar />
           <Routes>
             <Route path="/login" element={<Login />} />
@@ -49,6 +51,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/test-history"
+              element={
+                <ProtectedRoute>
+                  <TestHistory />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/test-result/:resultId"
+              element={
+                <ProtectedRoute>
+                  <TestResultDetail />
                 </ProtectedRoute>
               }
             />

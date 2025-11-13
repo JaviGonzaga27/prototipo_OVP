@@ -1,7 +1,7 @@
 // src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { MOCK_USERS } from '../constants/mockUsers';
+import { loginUser, registerUser, getCurrentUser } from '../services/auth';
 
 // Creamos y exportamos el contexto
 export const AuthContext = createContext(null);
@@ -17,45 +17,71 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+    const initAuth = async () => {
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+      
+      if (storedToken && storedUser) {
+        try {
+          // Verificar que el token siga siendo válido
+          const response = await getCurrentUser(storedToken);
+          setUser(response.user);
+          setToken(storedToken);
+        } catch (error) {
+          // Si el token no es válido, limpiar storage
+          localStorage.removeItem('user');
+          localStorage.removeItem('token');
+        }
+      }
+      setLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   const login = async (email, password) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    const foundUser = MOCK_USERS.find(
-      u => u.email === email && u.password === password
-    );
-
-    if (!foundUser) {
-      throw new Error('Credenciales inválidas');
+    try {
+      const response = await loginUser(email, password);
+      
+      setUser(response.user);
+      setToken(response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('token', response.token);
+      
+      return response;
+    } catch (error) {
+      throw error;
     }
+  };
 
-    const { password: _, ...userWithoutPassword } = foundUser; // eslint-disable-line no-unused-vars
-    setUser(userWithoutPassword);
-    localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-    
-    return {
-      token: 'mock-jwt-token',
-      user: userWithoutPassword
-    };
+  const register = async (name, email, password) => {
+    try {
+      const response = await registerUser(name, email, password);
+      
+      setUser(response.user);
+      setToken(response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('token', response.token);
+      
+      return response;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const logout = () => {
     setUser(null);
+    setToken(null);
     localStorage.removeItem('user');
     localStorage.removeItem('token');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

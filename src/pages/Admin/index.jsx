@@ -1,0 +1,386 @@
+import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { useAuth } from '../../context/AuthContext';
+import { 
+  getAllUsers, 
+  deleteUser, 
+  updateUser,
+  getAllTestResults,
+  getStats 
+} from '../../services/admin';
+import { 
+  TrashIcon, 
+  PencilIcon,
+  ChartBarIcon,
+  UsersIcon,
+  DocumentTextIcon
+} from '@heroicons/react/24/outline';
+
+const Admin = () => {
+  const { token, user } = useAuth();
+  const [users, setUsers] = useState([]);
+  const [testResults, setTestResults] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState('users');
+  const [editingUser, setEditingUser] = useState(null);
+
+  useEffect(() => {
+    if (user?.role !== 'admin') {
+      setError('No tienes permisos para acceder a esta página');
+      setLoading(false);
+      return;
+    }
+    
+    loadData();
+  }, [user, token]);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const [usersData, resultsData, statsData] = await Promise.all([
+        getAllUsers(token),
+        getAllTestResults(token),
+        getStats(token)
+      ]);
+      
+      setUsers(usersData.users);
+      setTestResults(resultsData.results);
+      setStats(statsData.stats);
+      setError('');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm('¿Estás seguro de eliminar este usuario?')) return;
+    
+    try {
+      await deleteUser(token, userId);
+      setUsers(users.filter(u => u.id !== userId));
+    } catch (err) {
+      alert('Error al eliminar usuario: ' + err.message);
+    }
+  };
+
+  const handleUpdateUser = async (userId, userData) => {
+    try {
+      await updateUser(token, userId, userData);
+      setUsers(users.map(u => u.id === userId ? { ...u, ...userData } : u));
+      setEditingUser(null);
+    } catch (err) {
+      alert('Error al actualizar usuario: ' + err.message);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
+  if (error || user?.role !== 'admin') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-2">Acceso Denegado</h2>
+          <p className="text-gray-600">{error || 'No tienes permisos de administrador'}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Panel de Administración</h1>
+        <p className="text-gray-600">Gestiona usuarios y visualiza resultados</p>
+      </div>
+
+      {/* Estadísticas */}
+      {stats && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="flex items-center">
+              <UsersIcon className="h-10 w-10 text-indigo-600 mr-4" />
+              <div>
+                <p className="text-gray-500 text-sm">Total Estudiantes</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalUsers}</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="flex items-center">
+              <ChartBarIcon className="h-10 w-10 text-green-600 mr-4" />
+              <div>
+                <p className="text-gray-500 text-sm">Total Administradores</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalAdmins}</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="flex items-center">
+              <DocumentTextIcon className="h-10 w-10 text-purple-600 mr-4" />
+              <div>
+                <p className="text-gray-500 text-sm">Tests Completados</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalTests}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tabs */}
+      <div className="bg-white rounded-lg shadow-md">
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex">
+            <button
+              onClick={() => setActiveTab('users')}
+              className={`px-6 py-4 text-sm font-medium ${
+                activeTab === 'users'
+                  ? 'border-b-2 border-indigo-500 text-indigo-600'
+                  : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Usuarios
+            </button>
+            <button
+              onClick={() => setActiveTab('results')}
+              className={`px-6 py-4 text-sm font-medium ${
+                activeTab === 'results'
+                  ? 'border-b-2 border-indigo-500 text-indigo-600'
+                  : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Resultados
+            </button>
+          </nav>
+        </div>
+
+        <div className="p-6">
+          {activeTab === 'users' && (
+            <UsersTable 
+              users={users} 
+              onDelete={handleDeleteUser}
+              onEdit={setEditingUser}
+              editingUser={editingUser}
+              onUpdate={handleUpdateUser}
+            />
+          )}
+          
+          {activeTab === 'results' && (
+            <ResultsTable results={testResults} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Componente de tabla de usuarios
+const UsersTable = ({ users, onDelete, onEdit, editingUser, onUpdate }) => {
+  const [editForm, setEditForm] = useState({ name: '', email: '', role: '' });
+
+  UsersTable.propTypes = {
+    users: PropTypes.array.isRequired,
+    onDelete: PropTypes.func.isRequired,
+    onEdit: PropTypes.func.isRequired,
+    editingUser: PropTypes.object,
+    onUpdate: PropTypes.func.isRequired
+  };
+
+  useEffect(() => {
+    if (editingUser) {
+      setEditForm({
+        name: editingUser.name,
+        email: editingUser.email,
+        role: editingUser.role
+      });
+    }
+  }, [editingUser]);
+
+  const handleSubmitEdit = (e) => {
+    e.preventDefault();
+    onUpdate(editingUser.id, editForm);
+  };
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Nombre
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Email
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Rol
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Fecha Registro
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td className="px-6 py-4 whitespace-nowrap">
+                {editingUser?.id === user.id ? (
+                  <input
+                    type="text"
+                    value={editForm.name}
+                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                    className="border border-gray-300 rounded px-2 py-1"
+                  />
+                ) : (
+                  <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                )}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                {editingUser?.id === user.id ? (
+                  <input
+                    type="email"
+                    value={editForm.email}
+                    onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                    className="border border-gray-300 rounded px-2 py-1"
+                  />
+                ) : (
+                  <div className="text-sm text-gray-500">{user.email}</div>
+                )}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                {editingUser?.id === user.id ? (
+                  <select
+                    value={editForm.role}
+                    onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
+                    className="border border-gray-300 rounded px-2 py-1"
+                  >
+                    <option value="student">Estudiante</option>
+                    <option value="admin">Administrador</option>
+                  </select>
+                ) : (
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    user.role === 'admin' 
+                      ? 'bg-purple-100 text-purple-800' 
+                      : 'bg-green-100 text-green-800'
+                  }`}>
+                    {user.role === 'admin' ? 'Administrador' : 'Estudiante'}
+                  </span>
+                )}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {new Date(user.createdAt).toLocaleDateString()}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                {editingUser?.id === user.id ? (
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={handleSubmitEdit}
+                      className="text-green-600 hover:text-green-900"
+                    >
+                      Guardar
+                    </button>
+                    <button
+                      onClick={() => onEdit(null)}
+                      className="text-gray-600 hover:text-gray-900"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => onEdit(user)}
+                      className="text-indigo-600 hover:text-indigo-900"
+                    >
+                      <PencilIcon className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={() => onDelete(user.id)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  </div>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+// Componente de tabla de resultados
+const ResultsTable = ({ results }) => {
+  ResultsTable.propTypes = {
+    results: PropTypes.array.isRequired
+  };
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Usuario
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Email
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Fecha
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Carreras Recomendadas
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {results.map((result) => (
+            <tr key={result.id}>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm font-medium text-gray-900">
+                  {result.userId?.name || 'Usuario eliminado'}
+                </div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-500">
+                  {result.userId?.email || 'N/A'}
+                </div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {new Date(result.completedAt).toLocaleDateString()}
+              </td>
+              <td className="px-6 py-4">
+                <div className="text-sm text-gray-900">
+                  {result.results?.slice(0, 3).map((r, idx) => (
+                    <div key={idx} className="mb-1">
+                      {r.career} ({r.score}%)
+                    </div>
+                  ))}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default Admin;
+

@@ -1,53 +1,9 @@
-// src/services/auth.js
+// src/services/admin.js
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-export const loginUser = async (email, password) => {
+export const getAllUsers = async (token) => {
   try {
-    const response = await fetch(`${API_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Error en la autenticación');
-    }
-
-    return data;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-export const registerUser = async (name, email, password) => {
-  try {
-    const response = await fetch(`${API_URL}/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, password }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Error en el registro');
-    }
-
-    return data;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-export const getCurrentUser = async (token) => {
-  try {
-    const response = await fetch(`${API_URL}/auth/me`, {
+    const response = await fetch(`${API_URL}/admin/users`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -58,7 +14,7 @@ export const getCurrentUser = async (token) => {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || 'Error al obtener usuario');
+      throw new Error(data.message || 'Error al obtener usuarios');
     }
 
     return data;
@@ -67,21 +23,20 @@ export const getCurrentUser = async (token) => {
   }
 };
 
-export const saveTestResults = async (token, answers, results) => {
+export const deleteUser = async (token, userId) => {
   try {
-    const response = await fetch(`${API_URL}/test/results`, {
-      method: 'POST',
+    const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+      method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ answers, results }),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || 'Error al guardar resultados');
+      throw new Error(data.message || 'Error al eliminar usuario');
     }
 
     return data;
@@ -90,9 +45,32 @@ export const saveTestResults = async (token, answers, results) => {
   }
 };
 
-export const getMyTestResults = async (token) => {
+export const updateUser = async (token, userId, userData) => {
   try {
-    const response = await fetch(`${API_URL}/test/my-results`, {
+    const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Error al actualizar usuario');
+    }
+
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getAllTestResults = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/admin/results`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -112,9 +90,9 @@ export const getMyTestResults = async (token) => {
   }
 };
 
-export const getTestResultById = async (token, resultId) => {
+export const getUserTestResults = async (token, userId) => {
   try {
-    const response = await fetch(`${API_URL}/test/results/${resultId}`, {
+    const response = await fetch(`${API_URL}/admin/results/${userId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -125,7 +103,29 @@ export const getTestResultById = async (token, resultId) => {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || 'Error al obtener resultado');
+      throw new Error(data.message || 'Error al obtener resultados del usuario');
+    }
+
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getStats = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/admin/stats`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Error al obtener estadísticas');
     }
 
     return data;

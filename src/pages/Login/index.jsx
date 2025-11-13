@@ -6,17 +6,21 @@ import {
   LockClosedIcon, 
   EyeIcon, 
   EyeSlashIcon,
-  ExclamationCircleIcon
+  ExclamationCircleIcon,
+  UserIcon
 } from '@heroicons/react/24/outline';
 
 const Login = () => {
+  const [isRegisterMode, setIsRegisterMode] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, register } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,13 +28,39 @@ const Login = () => {
     setError('');
 
     try {
-      await login(email, password);
+      if (isRegisterMode) {
+        // Validar contraseñas coincidan
+        if (password !== confirmPassword) {
+          setError('Las contraseñas no coinciden');
+          setIsLoading(false);
+          return;
+        }
+        
+        if (password.length < 6) {
+          setError('La contraseña debe tener al menos 6 caracteres');
+          setIsLoading(false);
+          return;
+        }
+
+        await register(name, email, password);
+      } else {
+        await login(email, password);
+      }
       navigate('/');
     } catch (error) {
       setError(error.message);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const toggleMode = () => {
+    setIsRegisterMode(!isRegisterMode);
+    setError('');
+    setName('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
   };
 
   return (
@@ -40,29 +70,34 @@ const Login = () => {
           {/* Header */}
           <div className="text-center">
             <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
-              Bienvenido de nuevo
+              {isRegisterMode ? 'Crear cuenta' : 'Bienvenido de nuevo'}
             </h2>
             <p className="text-gray-600">
-              Ingresa tus credenciales para continuar
+              {isRegisterMode 
+                ? 'Completa el formulario para registrarte' 
+                : 'Ingresa tus credenciales para continuar'
+              }
             </p>
           </div>
 
-          {/* Credenciales de prueba */}
-          <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
-            <div className="flex flex-col">
-              <span className="font-semibold text-blue-800 mb-2">Credenciales de prueba:</span>
-              <div className="space-y-1">
-                <div className="flex items-center text-blue-700">
-                  <EnvelopeIcon className="w-4 h-4 mr-2" />
-                  <span>test@test.com</span>
-                </div>
-                <div className="flex items-center text-blue-700">
-                  <LockClosedIcon className="w-4 h-4 mr-2" />
-                  <span>123456</span>
+          {/* Credenciales de administrador */}
+          {!isRegisterMode && (
+            <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+              <div className="flex flex-col">
+                <span className="font-semibold text-blue-800 mb-2">Credenciales de administrador:</span>
+                <div className="space-y-1">
+                  <div className="flex items-center text-blue-700">
+                    <EnvelopeIcon className="w-4 h-4 mr-2" />
+                    <span>admin@ovp.com</span>
+                  </div>
+                  <div className="flex items-center text-blue-700">
+                    <LockClosedIcon className="w-4 h-4 mr-2" />
+                    <span>admin123</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
@@ -73,6 +108,30 @@ const Login = () => {
             )}
 
             <div className="space-y-4">
+              {/* Name Input - Solo en modo registro */}
+              {isRegisterMode && (
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    Nombre completo
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <UserIcon className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      required
+                      className="appearance-none block w-full pl-10 px-3 py-2 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      placeholder="Ingresa tu nombre"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
               {/* Email Input */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -110,7 +169,7 @@ const Login = () => {
                     type={showPassword ? "text" : "password"}
                     required
                     className="appearance-none block w-full pl-10 px-3 py-2 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                    placeholder="Ingresa tu contraseña"
+                    placeholder={isRegisterMode ? "Mínimo 6 caracteres" : "Ingresa tu contraseña"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
@@ -127,6 +186,30 @@ const Login = () => {
                   </button>
                 </div>
               </div>
+
+              {/* Confirm Password - Solo en modo registro */}
+              {isRegisterMode && (
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                    Confirmar contraseña
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <LockClosedIcon className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showPassword ? "text" : "password"}
+                      required
+                      className="appearance-none block w-full pl-10 px-3 py-2 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      placeholder="Confirma tu contraseña"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             <button
@@ -142,13 +225,27 @@ const Login = () => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Iniciando sesión...
+                  {isRegisterMode ? 'Registrando...' : 'Iniciando sesión...'}
                 </div>
               ) : (
-                'Iniciar Sesión'
+                isRegisterMode ? 'Registrarse' : 'Iniciar Sesión'
               )}
             </button>
           </form>
+
+          {/* Toggle entre Login y Registro */}
+          <div className="text-center">
+            <p className="text-sm text-gray-600">
+              {isRegisterMode ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?'}
+              {' '}
+              <button
+                onClick={toggleMode}
+                className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
+              >
+                {isRegisterMode ? 'Inicia sesión' : 'Regístrate'}
+              </button>
+            </p>
+          </div>
         </div>
       </div>
     </div>

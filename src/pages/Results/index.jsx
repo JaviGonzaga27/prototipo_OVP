@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuestionnaire } from '../../context/QuestionnaireContext';
+import { useAuth } from '../../context/AuthContext';
+import { saveTestResults } from '../../services/auth';
 
 import { 
   AcademicCapIcon, 
@@ -48,6 +50,7 @@ const careerGroups = [
 const Results = () => {
   const navigate = useNavigate();
   const { state } = useQuestionnaire();
+  const { token } = useAuth();
   const [topCareers, setTopCareers] = useState([]);
   const [statistics, setStatistics] = useState({
     tecnologia: 0,
@@ -55,9 +58,10 @@ const Results = () => {
     creatividad: 0,
     humanidades: 0
   });
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const calculateResults = () => {
+    const calculateResults = async () => {
       const answers = state.answers;
       const scores = {
         tecnologia: 0,
@@ -97,10 +101,31 @@ const Results = () => {
 
       setTopCareers(sortedCareers);
       setStatistics(scores);
+
+      // Guardar resultados en la base de datos
+      if (!saved && token) {
+        try {
+          const answersArray = Object.entries(answers).map(([questionId, answer]) => ({
+            questionId: parseInt(questionId),
+            answer
+          }));
+
+          const resultsArray = sortedCareers.map(career => ({
+            career: career.name,
+            score: career.percentage,
+            description: career.group
+          }));
+
+          await saveTestResults(token, answersArray, resultsArray);
+          setSaved(true);
+        } catch (error) {
+          console.error('Error al guardar resultados:', error);
+        }
+      }
     };
 
     calculateResults();
-  }, [state.answers]);
+  }, [state.answers, token, saved]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 py-12 px-4 sm:px-6 lg:px-8">
