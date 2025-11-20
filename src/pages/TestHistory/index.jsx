@@ -82,35 +82,35 @@ const TestHistory = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
                 Historial de Tests
               </h1>
-              <p className="mt-2 text-gray-600">
+              <p className="mt-2 text-sm md:text-base text-gray-600">
                 Revisa todos tus resultados de tests vocacionales
               </p>
             </div>
             <button
               onClick={() => navigate('/questionnaire')}
-              className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              className="flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm md:text-base"
             >
-              <DocumentChartBarIcon className="h-5 w-5 mr-2" />
+              <DocumentChartBarIcon className="h-4 w-4 md:h-5 md:w-5 mr-2" />
               Nuevo Test
             </button>
           </div>
         </div>
 
         {/* Estadísticas Rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
+          <div className="bg-white p-4 md:p-6 rounded-lg shadow">
             <div className="flex items-center">
-              <div className="p-3 bg-indigo-100 rounded-lg">
-                <ChartBarIcon className="h-8 w-8 text-indigo-600" />
+              <div className="p-2 md:p-3 bg-indigo-100 rounded-lg">
+                <ChartBarIcon className="h-6 w-6 md:h-8 md:w-8 text-indigo-600" />
               </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-600">Tests Completados</p>
-                <p className="text-2xl font-bold text-gray-900">{results.length}</p>
+              <div className="ml-3 md:ml-4">
+                <p className="text-xs md:text-sm text-gray-600">Tests Completados</p>
+                <p className="text-xl md:text-2xl font-bold text-gray-900">{results.length}</p>
               </div>
             </div>
           </div>
@@ -171,9 +171,9 @@ const TestHistory = () => {
               {results.map((result, index) => (
                 <div
                   key={result.id}
-                  className="p-6 hover:bg-gray-50 transition-colors"
+                  className="p-4 md:p-6 hover:bg-gray-50 transition-colors"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center mb-2">
                         <span className="text-lg font-semibold text-gray-900">
@@ -189,19 +189,40 @@ const TestHistory = () => {
                         {formatDate(result.completedAt)}
                       </div>
 
+                      {/* Carrera Principal y Confianza */}
+                      {result.predictedCareer && (
+                        <div className="mt-3 p-3 bg-indigo-50 rounded-lg border border-indigo-200">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <p className="text-xs text-indigo-600 font-medium mb-1">Carrera Recomendada</p>
+                              <p className="text-sm font-bold text-gray-900">{result.predictedCareer}</p>
+                            </div>
+                            {result.confidence && (
+                              <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                result.confidence >= 80 ? 'bg-green-100 text-green-800' :
+                                result.confidence >= 60 ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-orange-100 text-orange-800'
+                              }`}>
+                                {result.confidence}%
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Top 3 Carreras */}
-                      {result.results?.topCareers && (
-                        <div className="mt-4">
-                          <p className="text-sm font-medium text-gray-700 mb-2">
-                            Top 3 Carreras Recomendadas:
+                      {result.topCareers && result.topCareers.length > 0 && (
+                        <div className="mt-3">
+                          <p className="text-xs font-medium text-gray-600 mb-2">
+                            Top 3 Alternativas:
                           </p>
                           <div className="flex flex-wrap gap-2">
-                            {result.results.topCareers.slice(0, 3).map((career, idx) => (
+                            {result.topCareers.slice(0, 3).map((career, idx) => (
                               <span
                                 key={idx}
-                                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                                className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700"
                               >
-                                {idx + 1}. {career.name || career.career} ({career.score}%)
+                                {idx + 1}. {career.carrera} ({career.porcentaje}%)
                               </span>
                             ))}
                           </div>

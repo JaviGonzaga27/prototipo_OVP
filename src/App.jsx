@@ -11,6 +11,7 @@ import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import TestHistory from "./pages/TestHistory";
 import TestResultDetail from "./pages/TestResultDetail";
+import Settings from "./pages/Settings";
 import { QuestionnaireProvider } from "./context/QuestionnaireContext";
 
 function App() {
@@ -75,6 +76,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <TestResultDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
                 </ProtectedRoute>
               }
             />

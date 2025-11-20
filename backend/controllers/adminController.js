@@ -138,7 +138,8 @@ export const getAllTestResults = async (req, res) => {
     const results = await TestResult.findAll({
       include: [{
         model: User,
-        attributes: ['name', 'email']
+        as: 'user',
+        attributes: ['id', 'name', 'email', 'role']
       }],
       order: [['completedAt', 'DESC']]
     });
@@ -149,6 +150,7 @@ export const getAllTestResults = async (req, res) => {
       results
     });
   } catch (error) {
+    console.error('❌ Error en getAllTestResults:', error);
     res.status(500).json({ 
       success: false, 
       message: 'Error al obtener resultados',
@@ -166,7 +168,8 @@ export const getUserTestResults = async (req, res) => {
       where: { userId: req.params.userId },
       include: [{
         model: User,
-        attributes: ['name', 'email']
+        as: 'user',
+        attributes: ['id', 'name', 'email', 'role']
       }],
       order: [['completedAt', 'DESC']]
     });
@@ -177,6 +180,7 @@ export const getUserTestResults = async (req, res) => {
       results
     });
   } catch (error) {
+    console.error('❌ Error en getUserTestResults:', error);
     res.status(500).json({ 
       success: false, 
       message: 'Error al obtener resultados del usuario',

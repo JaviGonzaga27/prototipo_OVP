@@ -137,3 +137,90 @@ export const getMe = async (req, res) => {
     });
   }
 };
+
+// @desc    Cambiar contraseña
+// @route   POST /api/auth/change-password
+// @access  Private
+export const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Por favor proporciona ambas contraseñas'
+      });
+    }
+
+    const user = await User.findByPk(req.user.id);
+
+    // Verificar contraseña actual
+    const isMatch = await user.matchPassword(currentPassword);
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: 'La contraseña actual es incorrecta'
+      });
+    }
+
+    // Actualizar contraseña
+    user.password = newPassword;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Contraseña actualizada exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al cambiar la contraseña',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Actualizar perfil
+// @route   PUT /api/auth/update-profile
+// @access  Private
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, email } = req.body;
+
+    const user = await User.findByPk(req.user.id);
+
+    // Verificar si el email ya existe (si es diferente al actual)
+    if (email && email !== user.email) {
+      const emailExists = await User.findOne({ where: { email } });
+      if (emailExists) {
+        return res.status(400).json({
+          success: false,
+          message: 'El correo electrónico ya está en uso'
+        });
+      }
+    }
+
+    // Actualizar campos
+    if (name) user.name = name;
+    if (email) user.email = email;
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Perfil actualizado exitosamente',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al actualizar el perfil',
+      error: error.message
+    });
+  }
+};
