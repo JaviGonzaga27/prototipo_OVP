@@ -12,6 +12,13 @@ const sequelize = new Sequelize(
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
     logging: false, // Cambiar a console.log para debug
+    dialectOptions: {
+      client_encoding: 'UTF8'
+    },
+    define: {
+      charset: 'utf8',
+      collate: 'utf8_general_ci'
+    },
     pool: {
       max: 5,
       min: 0,

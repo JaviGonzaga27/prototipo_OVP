@@ -6,9 +6,14 @@ Recibe datos en JSON y devuelve predicciones.
 """
 
 import sys
+import io
 import json
 import os
 from pathlib import Path
+
+# Configurar codificación UTF-8 para stdin/stdout
+sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # Suprimir warnings de scikit-learn sobre versiones
 import warnings

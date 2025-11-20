@@ -20,20 +20,24 @@ class MLService {
    */
   async predecir(respuestas) {
     return new Promise((resolve, reject) => {
-      // Ejecutar script de Python
-      const pythonProcess = spawn('python', [this.pythonScript]);
+      // Ejecutar script de Python con codificación UTF-8
+      const pythonProcess = spawn('python', [this.pythonScript], {
+        env: { ...process.env, PYTHONIOENCODING: 'utf-8' }
+      });
       
       let outputData = '';
       let errorData = '';
 
-      // Capturar salida estándar
+      // Capturar salida estándar con codificación UTF-8
+      pythonProcess.stdout.setEncoding('utf8');
       pythonProcess.stdout.on('data', (data) => {
-        outputData += data.toString();
+        outputData += data;
       });
 
-      // Capturar errores
+      // Capturar errores con codificación UTF-8
+      pythonProcess.stderr.setEncoding('utf8');
       pythonProcess.stderr.on('data', (data) => {
-        errorData += data.toString();
+        errorData += data;
       });
 
       // Manejar finalización del proceso
