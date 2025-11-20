@@ -5,80 +5,6 @@ import bcrypt from 'bcryptjs';
 // Cargar variables de entorno
 dotenv.config();
 
-// Datos de preguntas del test vocacional
-const questions = [
-  {
-    text: '¿Te gusta trabajar con números y resolver problemas matemáticos?',
-    options: ['Muy poco', 'Poco', 'Neutral', 'Bastante', 'Mucho'],
-    category: 'ciencias',
-    order: 1,
-    isActive: true
-  },
-  {
-    text: '¿Te interesa entender cómo funcionan las cosas y la tecnología?',
-    options: ['Muy poco', 'Poco', 'Neutral', 'Bastante', 'Mucho'],
-    category: 'ingenieria',
-    order: 2,
-    isActive: true
-  },
-  {
-    text: '¿Disfrutas ayudando a las personas y trabajando en equipo?',
-    options: ['Muy poco', 'Poco', 'Neutral', 'Bastante', 'Mucho'],
-    category: 'social',
-    order: 3,
-    isActive: true
-  },
-  {
-    text: '¿Te atrae crear contenido artístico o diseñar cosas nuevas?',
-    options: ['Muy poco', 'Poco', 'Neutral', 'Bastante', 'Mucho'],
-    category: 'arte',
-    order: 4,
-    isActive: true
-  },
-  {
-    text: '¿Te interesa el funcionamiento del cuerpo humano y la salud?',
-    options: ['Muy poco', 'Poco', 'Neutral', 'Bastante', 'Mucho'],
-    category: 'salud',
-    order: 5,
-    isActive: true
-  },
-  {
-    text: '¿Disfrutas organizando eventos, liderando proyectos o administrando recursos?',
-    options: ['Muy poco', 'Poco', 'Neutral', 'Bastante', 'Mucho'],
-    category: 'administracion',
-    order: 6,
-    isActive: true
-  },
-  {
-    text: '¿Te gusta investigar, experimentar y descubrir cosas nuevas?',
-    options: ['Muy poco', 'Poco', 'Neutral', 'Bastante', 'Mucho'],
-    category: 'investigacion',
-    order: 7,
-    isActive: true
-  },
-  {
-    text: '¿Te interesa defender los derechos de las personas y la justicia?',
-    options: ['Muy poco', 'Poco', 'Neutral', 'Bastante', 'Mucho'],
-    category: 'derecho',
-    order: 8,
-    isActive: true
-  },
-  {
-    text: '¿Disfrutas comunicando ideas, escribiendo o hablando en público?',
-    options: ['Muy poco', 'Poco', 'Neutral', 'Bastante', 'Mucho'],
-    category: 'comunicacion',
-    order: 9,
-    isActive: true
-  },
-  {
-    text: '¿Te atrae trabajar al aire libre o con el medio ambiente?',
-    options: ['Muy poco', 'Poco', 'Neutral', 'Bastante', 'Mucho'],
-    category: 'ambiental',
-    order: 10,
-    isActive: true
-  }
-];
-
 async function initDatabase() {
   try {
     console.log('🔄 Conectando a la base de datos PostgreSQL...');
@@ -108,16 +34,10 @@ async function initDatabase() {
     console.log('   Email: admin@ovp.com');
     console.log('   Password: admin123');
 
-    console.log('\n🔄 Insertando preguntas del test vocacional...');
-    
-    // Insertar preguntas
-    for (const question of questions) {
-      await Question.create(question);
-    }
-    
-    console.log(`✅ ${questions.length} preguntas insertadas correctamente.`);
+    console.log('\n💡 Para insertar las 65 preguntas del test vocacional, ejecuta:');
+    console.log('   node scripts/populateQuestions.js\n');
 
-    console.log('\n🔄 Creando usuario de prueba...');
+    console.log('🔄 Creando usuario de prueba...');
     
     // Crear un usuario estudiante de prueba
     const testUser = await User.create({
@@ -133,11 +53,11 @@ async function initDatabase() {
 
     console.log('\n🔄 Creando resultado de test de ejemplo...');
     
-    // Crear un resultado de test de ejemplo
-    const sampleAnswers = questions.map((q, index) => ({
-      questionId: index + 1,
-      answer: Math.floor(Math.random() * 5) // Respuesta aleatoria 0-4
-    }));
+    // Crear un resultado de test de ejemplo con respuestas simuladas
+    const sampleAnswers = {};
+    for (let i = 1; i <= 65; i++) {
+      sampleAnswers[`q${i}`] = Math.floor(Math.random() * 5) + 1; // Respuesta aleatoria 1-5
+    }
 
     const sampleResults = {
       topCareers: [
@@ -147,10 +67,29 @@ async function initDatabase() {
       ]
     };
 
+    // Crear perfil RIASEC y Gardner de ejemplo
+    const sampleProfile = {
+      R: 3.5, I: 4.2, A: 2.8, S: 3.0, E: 3.5, C: 4.0,
+      LM: 4.0, L: 3.5, ES: 3.0, M: 4.5, CK: 3.0, IP: 3.5, IA: 4.0, N: 3.0,
+      Rendimiento_General: 4, Rendimiento_STEM: 5, Rendimiento_Humanidades: 3
+    };
+
+    const sampleTopCareers = [
+      { carrera: 'Ingeniería de Software', probabilidad: 0.85, porcentaje: 85.0 },
+      { carrera: 'Ciencias de la Computación', probabilidad: 0.80, porcentaje: 80.0 },
+      { carrera: 'Ingeniería Electrónica', probabilidad: 0.75, porcentaje: 75.0 },
+      { carrera: 'Ingeniería Industrial', probabilidad: 0.70, porcentaje: 70.0 },
+      { carrera: 'Matemáticas Aplicadas', probabilidad: 0.65, porcentaje: 65.0 }
+    ];
+
     await TestResult.create({
       userId: testUser.id,
       answers: sampleAnswers,
-      results: sampleResults
+      results: sampleResults,
+      predictedCareer: 'Ingeniería de Software',
+      confidence: 85.0,
+      topCareers: sampleTopCareers,
+      profile: sampleProfile
     });
 
     console.log('✅ Resultado de test de ejemplo creado.');

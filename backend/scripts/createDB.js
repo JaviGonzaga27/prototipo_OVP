@@ -30,10 +30,10 @@ async function createDatabase() {
     if (result.rows.length > 0) {
       console.log(`⚠️  La base de datos '${dbName}' ya existe.`);
     } else {
-      // Crear la base de datos
-      console.log(`🔄 Creando base de datos '${dbName}'...`);
-      await client.query(`CREATE DATABASE ${dbName}`);
-      console.log(`✅ Base de datos '${dbName}' creada correctamente!`);
+      // Crear la base de datos con codificación UTF-8
+      console.log(`🔄 Creando base de datos '${dbName}' con codificación UTF-8...`);
+      await client.query(`CREATE DATABASE ${dbName} WITH ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8' TEMPLATE = template0`);
+      console.log(`✅ Base de datos '${dbName}' creada correctamente con UTF-8!`);
     }
 
     console.log('\n✨ Ahora puedes ejecutar: npm run init-db\n');
