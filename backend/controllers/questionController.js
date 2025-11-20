@@ -199,3 +199,64 @@ export const toggleQuestionStatus = async (req, res) => {
     });
   }
 };
+
+// @desc    Obtener preguntas agrupadas por categoría y dimensión
+// @route   GET /api/questions/grouped
+// @access  Private
+export const getQuestionsGrouped = async (req, res) => {
+  try {
+    const questions = await Question.findAll({
+      where: { isActive: true },
+      order: [['order', 'ASC']],
+      attributes: { exclude: ['createdAt', 'updatedAt'] }
+    });
+
+    // Agrupar preguntas
+    const grouped = {
+      RIASEC: {
+        R: [],
+        I: [],
+        A: [],
+        S: [],
+        E: [],
+        C: []
+      },
+      Gardner: {
+        LM: [],
+        L: [],
+        ES: [],
+        M: [],
+        CK: [],
+        IP: [],
+        IA: [],
+        N: []
+      },
+      Rendimiento: {
+        General: [],
+        STEM: [],
+        Humanidades: []
+      }
+    };
+
+    questions.forEach(question => {
+      const category = question.category;
+      const dimension = question.dimension;
+      
+      if (grouped[category] && grouped[category][dimension]) {
+        grouped[category][dimension].push(question);
+      }
+    });
+
+    res.json({
+      success: true,
+      total: questions.length,
+      grouped
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error al obtener preguntas agrupadas',
+      error: error.message 
+    });
+  }
+};

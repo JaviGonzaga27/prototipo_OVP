@@ -1,177 +1,232 @@
 // src/pages/Questionnaire/index.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuestionnaire } from '../../context/QuestionnaireContext';
-import PropTypes from 'prop-types';
-
-// Componente para la pregunta individual
-const Question = ({ question, onAnswer, onNext, onPrevious, isLast, currentQuestion, totalQuestions }) => (
-  <div className="bg-white p-6 rounded-lg shadow-lg">
-    <div className="mb-6">
-      <div className="w-full bg-gray-200 rounded-full h-2">
-        <div 
-          className="bg-indigo-600 h-2 rounded-full" 
-          style={{ width: `${((currentQuestion + 1) / totalQuestions) * 100}%` }}
-        ></div>
-      </div>
-      <div className="text-sm text-gray-500 mt-2">
-        Pregunta {currentQuestion + 1} de {totalQuestions}
-      </div>
-    </div>
-
-    <h2 className="text-xl font-bold mb-4">{question.text}</h2>
-
-    <div className="space-y-4">
-      {question.options.map((option, index) => (
-        <label 
-          key={index}
-          className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
-        >
-          <input
-            type="radio"
-            name="answer"
-            value={option}
-            onChange={() => onAnswer(option)}
-            className="h-4 w-4 text-indigo-600"
-          />
-          <span className="ml-3">{option}</span>
-        </label>
-      ))}
-    </div>
-
-    <div className="flex justify-between mt-8">
-      <button
-        onClick={onPrevious}
-        disabled={currentQuestion === 0}
-        className={`px-4 py-2 rounded ${
-          currentQuestion === 0
-            ? 'bg-gray-300 cursor-not-allowed'
-            : 'bg-gray-600 text-white hover:bg-gray-700'
-        }`}
-      >
-        Anterior
-      </button>
-      <button
-        onClick={onNext}
-        className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-      >
-        {isLast ? 'Finalizar' : 'Siguiente'}
-      </button>
-    </div>
-  </div>
-);
-
-// Agregamos PropTypes para Question
-Question.propTypes = {
-  question: PropTypes.shape({
-    text: PropTypes.string.isRequired,
-    options: PropTypes.arrayOf(PropTypes.string).isRequired
-  }).isRequired,
-  onAnswer: PropTypes.func.isRequired,
-  onNext: PropTypes.func.isRequired,
-  onPrevious: PropTypes.func.isRequired,
-  isLast: PropTypes.bool.isRequired,
-  currentQuestion: PropTypes.number.isRequired,
-  totalQuestions: PropTypes.number.isRequired
-};
+import { useAuth } from '../../hooks/useAuth';
+import { getQuestions, predictCareer } from '../../services/auth';
 
 const Questionnaire = () => {
   const navigate = useNavigate();
-  const { state, dispatch } = useQuestionnaire();
-  const [currentAnswer, setCurrentAnswer] = useState('');
+  const { token } = useAuth();
+  
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [currentAnswer, setCurrentAnswer] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const questions = [
-    {
-      text: "¿Te interesa resolver problemas matemáticos?",
-      options: ["Muy poco", "Poco", "Neutral", "Bastante", "Mucho"]
-    },
-    {
-      text: "¿Disfrutas trabajando con computadoras y tecnología?",
-      options: ["Muy poco", "Poco", "Neutral", "Bastante", "Mucho"]
-    },
-    {
-      text: "¿Te gusta interactuar con personas y resolver sus problemas?",
-      options: ["Muy poco", "Poco", "Neutral", "Bastante", "Mucho"]
-    },
-    {
-      text: "¿Te interesan las ciencias naturales como biología o química?",
-      options: ["Muy poco", "Poco", "Neutral", "Bastante", "Mucho"]
-    },
-    {
-      text: "¿Disfrutas de actividades creativas como diseño o arte?",
-      options: ["Muy poco", "Poco", "Neutral", "Bastante", "Mucho"]
-    },
-    {
-      text: "¿Te gusta investigar y analizar información en profundidad?",
-      options: ["Muy poco", "Poco", "Neutral", "Bastante", "Mucho"]
-    },
-    {
-      text: "¿Te sientes cómodo liderando grupos o proyectos?",
-      options: ["Muy poco", "Poco", "Neutral", "Bastante", "Mucho"]
-    },
-    {
-      text: "¿Te interesan los temas relacionados con el medio ambiente?",
-      options: ["Muy poco", "Poco", "Neutral", "Bastante", "Mucho"]
-    },
-    {
-      text: "¿Disfrutas de la escritura y la comunicación?",
-      options: ["Muy poco", "Poco", "Neutral", "Bastante", "Mucho"]
-    },
-    {
-      text: "¿Te gustan las actividades que involucran números y finanzas?",
-      options: ["Muy poco", "Poco", "Neutral", "Bastante", "Mucho"]
-    }
-  ];
+  // Cargar preguntas desde el backend
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        setLoading(true);
+        const data = await getQuestions(token);
+        
+        if (data.success && data.questions) {
+          setQuestions(data.questions);
+        } else {
+          setError('No se pudieron cargar las preguntas');
+        }
+      } catch (err) {
+        console.error('Error al cargar preguntas:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleAnswer = (answer) => {
-    setCurrentAnswer(answer);
+    fetchQuestions();
+  }, [token]);
+
+  const handleAnswer = (option) => {
+    setCurrentAnswer(option.value);
   };
 
-  const handleNext = () => {
-    if (currentAnswer) {
-      dispatch({
-        type: 'SET_ANSWER',
-        questionId: state.currentQuestion,
-        answer: currentAnswer
-      });
+  const handleNext = async () => {
+    if (currentAnswer === null) {
+      alert('Por favor, selecciona una respuesta');
+      return;
+    }
 
-      if (state.currentQuestion === questions.length - 1) {
-        // Navegar a resultados cuando se complete el cuestionario
-        navigate('/results');
-      } else {
-        dispatch({
-          type: 'SET_CURRENT_QUESTION',
-          questionId: state.currentQuestion + 1
-        });
-        setCurrentAnswer('');
+    // Guardar respuesta actual (usando el order de la pregunta como key)
+    const newAnswers = {
+      ...answers,
+      [`q${questions[currentQuestion].order}`]: currentAnswer
+    };
+    setAnswers(newAnswers);
+
+    // Si es la última pregunta, enviar al backend para predicción
+    if (currentQuestion === questions.length - 1) {
+      try {
+        setSubmitting(true);
+        
+        // Realizar predicción con el modelo ML
+        const predictionData = await predictCareer(token, newAnswers);
+        
+        if (predictionData.success) {
+          // Navegar a resultados con la predicción
+          navigate('/results', { 
+            state: { 
+              prediction: predictionData.prediction,
+              testId: predictionData.prediction.id
+            } 
+          });
+        } else {
+          alert('Error al procesar el test: ' + predictionData.message);
+        }
+      } catch (err) {
+        console.error('Error al realizar predicción:', err);
+        alert('Error al procesar el test: ' + err.message);
+      } finally {
+        setSubmitting(false);
       }
     } else {
-      // Opcional: mostrar mensaje de que debe seleccionar una respuesta
-      alert('Por favor, selecciona una respuesta');
+      // Avanzar a la siguiente pregunta
+      setCurrentQuestion(currentQuestion + 1);
+      setCurrentAnswer(null);
     }
   };
 
   const handlePrevious = () => {
-    if (state.currentQuestion > 0) {
-      dispatch({
-        type: 'SET_CURRENT_QUESTION',
-        questionId: state.currentQuestion - 1
-      });
-      setCurrentAnswer(state.answers[state.currentQuestion - 1] || '');
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
+      // Restaurar respuesta anterior si existe
+      const previousAnswer = answers[`q${questions[currentQuestion - 1].order}`];
+      setCurrentAnswer(previousAnswer !== undefined ? previousAnswer : null);
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Cargando preguntas...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <p className="font-bold">Error</p>
+          <p>{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-2 text-sm underline"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded">
+          <p>No hay preguntas disponibles en este momento.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (submitting) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Procesando tus respuestas...</p>
+          <p className="text-sm text-gray-500">Generando predicción con IA...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const currentQuestionData = questions[currentQuestion];
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <Question
-        question={questions[state.currentQuestion]}
-        onAnswer={handleAnswer}
-        onNext={handleNext}
-        onPrevious={handlePrevious}
-        isLast={state.currentQuestion === questions.length - 1}
-        currentQuestion={state.currentQuestion}
-        totalQuestions={questions.length}
-      />
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        {/* Barra de progreso */}
+        <div className="mb-6">
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div 
+              className="bg-indigo-600 h-2 rounded-full transition-all duration-300" 
+              style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+            ></div>
+          </div>
+          <div className="text-sm text-gray-500 mt-2 flex justify-between">
+            <span>Pregunta {currentQuestion + 1} de {questions.length}</span>
+            <span>{Math.round(((currentQuestion + 1) / questions.length) * 100)}%</span>
+          </div>
+        </div>
+
+        {/* Categoría y Dimensión */}
+        <div className="mb-4">
+          <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">
+            {currentQuestionData.category} - {currentQuestionData.dimension}
+          </span>
+        </div>
+
+        {/* Pregunta */}
+        <h2 className="text-xl font-bold mb-6">{currentQuestionData.text}</h2>
+
+        {/* Opciones */}
+        <div className="space-y-3">
+          {currentQuestionData.options.map((option, index) => (
+            <label 
+              key={index}
+              className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                currentAnswer === option.value
+                  ? 'border-indigo-600 bg-indigo-50'
+                  : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+              }`}
+            >
+              <input
+                type="radio"
+                name="answer"
+                value={option.value}
+                checked={currentAnswer === option.value}
+                onChange={() => handleAnswer(option)}
+                className="h-4 w-4 text-indigo-600"
+              />
+              <span className="ml-3 flex-1">{option.label}</span>
+              <span className="text-sm text-gray-500">({option.value})</span>
+            </label>
+          ))}
+        </div>
+
+        {/* Botones de navegación */}
+        <div className="flex justify-between mt-8">
+          <button
+            onClick={handlePrevious}
+            disabled={currentQuestion === 0}
+            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+              currentQuestion === 0
+                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-600 text-white hover:bg-gray-700'
+            }`}
+          >
+            ← Anterior
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={currentAnswer === null}
+            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+              currentAnswer === null
+                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                : 'bg-indigo-600 text-white hover:bg-indigo-700'
+            }`}
+          >
+            {currentQuestion === questions.length - 1 ? 'Finalizar →' : 'Siguiente →'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

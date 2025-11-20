@@ -19,12 +19,36 @@ const TestResult = sequelize.define('TestResult', {
   answers: {
     type: DataTypes.JSONB,
     allowNull: false,
-    defaultValue: []
+    defaultValue: {},
+    comment: 'Respuestas del test (q1-q65 o promedios por dimensión)'
   },
   results: {
     type: DataTypes.JSONB,
-    allowNull: false,
-    defaultValue: []
+    allowNull: true,
+    defaultValue: {},
+    comment: 'Resultados calculados (legacy)'
+  },
+  predictedCareer: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+    comment: 'Carrera recomendada por el modelo ML'
+  },
+  confidence: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+    comment: 'Nivel de confianza de la predicción (0-1)'
+  },
+  topCareers: {
+    type: DataTypes.JSONB,
+    allowNull: true,
+    defaultValue: [],
+    comment: 'Top 5 carreras con sus probabilidades'
+  },
+  profile: {
+    type: DataTypes.JSONB,
+    allowNull: true,
+    defaultValue: {},
+    comment: 'Perfil del estudiante (promedios RIASEC, Gardner, Rendimiento)'
   }
 }, {
   tableName: 'TestResults',

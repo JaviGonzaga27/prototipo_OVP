@@ -67,6 +67,77 @@ export const getCurrentUser = async (token) => {
   }
 };
 
+// Obtener preguntas del test
+export const getQuestions = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/questions`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Error al obtener preguntas');
+    }
+
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+// Obtener preguntas agrupadas por categoría
+export const getQuestionsGrouped = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/questions/grouped`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Error al obtener preguntas');
+    }
+
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+// Realizar predicción con ML (NUEVO - Recomendado)
+export const predictCareer = async (token, answers) => {
+  try {
+    const response = await fetch(`${API_URL}/test/predict`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ answers }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Error al realizar predicción');
+    }
+
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+// Guardar resultados del test (Legacy - mantener por compatibilidad)
 export const saveTestResults = async (token, answers, results) => {
   try {
     const response = await fetch(`${API_URL}/test/results`, {

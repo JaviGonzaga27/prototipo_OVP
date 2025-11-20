@@ -1,0 +1,38 @@
+{
+  "nombre": "prueba1",
+  "perfil": {
+    "R": 2.0,
+    "I": 3.4,
+    "A": 2.0,
+    "S": 2.6,
+    "E": 2.2,
+    "C": 2.8,
+    "LM": 3.5,
+    "L": 1.8,
+    "ES": 2.0,
+    "M": 2.0,
+    "CK": 2.0,
+    "IP": 3.0,
+    "IA": 1.8,
+    "N": 3.5,
+    "Rendimiento_General": 3,
+    "Rendimiento_STEM": 2,
+    "Rendimiento_Humanidades": 2
+  },
+  "carrera_recomendada": "Contabilidad",
+  "confianza": 0.5128489267143114,
+  "top_3": [
+    {
+      "carrera": "Contabilidad",
+      "probabilidad": 0.5128489267143114
+    },
+    {
+      "carrera": "Arquitectura",
+      "probabilidad": 0.0934009009009009
+    },
+    {
+      "carrera": "Psicología",
+      "probabilidad": 0.09281460961889695
+    }
+  ]
+}

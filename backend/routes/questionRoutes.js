@@ -6,7 +6,8 @@ import {
   createQuestion,
   updateQuestion,
   deleteQuestion,
-  toggleQuestionStatus
+  toggleQuestionStatus,
+  getQuestionsGrouped
 } from '../controllers/questionController.js';
 import { protect, adminOnly } from '../middleware/auth.js';
 
@@ -14,6 +15,7 @@ const router = express.Router();
 
 // Rutas públicas para estudiantes (solo preguntas activas)
 router.get('/', protect, getActiveQuestions);
+router.get('/grouped', protect, getQuestionsGrouped);
 
 // Rutas de administrador
 router.get('/all', protect, adminOnly, getAllQuestions);

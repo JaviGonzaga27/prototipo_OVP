@@ -30,7 +30,13 @@ const Question = sequelize.define('Question', {
   },
   category: {
     type: DataTypes.STRING(50),
-    allowNull: true
+    allowNull: true,
+    comment: 'RIASEC, Gardner, o Rendimiento'
+  },
+  dimension: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    comment: 'R, I, A, S, E, C para RIASEC; LM, L, ES, M, CK, IP, IA, N para Gardner; General, STEM, Humanidades para Rendimiento'
   },
   order: {
     type: DataTypes.INTEGER,
@@ -40,6 +46,27 @@ const Question = sequelize.define('Question', {
   isActive: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
+  },
+  scaleMin: {
+    type: DataTypes.INTEGER,
+    defaultValue: 1,
+    comment: 'Valor mínimo de la escala (1-5)'
+  },
+  scaleMax: {
+    type: DataTypes.INTEGER,
+    defaultValue: 5,
+    comment: 'Valor máximo de la escala (1-5)'
+  },
+  scaleLabels: {
+    type: DataTypes.JSONB,
+    defaultValue: {
+      1: 'Nada',
+      2: 'Poco',
+      3: 'Moderado',
+      4: 'Mucho',
+      5: 'Totalmente'
+    },
+    comment: 'Etiquetas para cada valor de la escala'
   }
 }, {
   tableName: 'Questions',
