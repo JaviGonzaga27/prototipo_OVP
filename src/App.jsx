@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/common/Navbar";
+import InactivityHandler from "./components/common/InactivityHandler";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Questionnaire from "./pages/Questionnaire";
@@ -19,10 +20,11 @@ function App() {
     <AuthProvider>
       <QuestionnaireProvider>
       <Router>
-        <div className="min-h-screen bg-gray-50">
-          <Navbar />
-          <Routes>
-            <Route path="/login" element={<Login />} />
+        <InactivityHandler>
+          <div className="min-h-screen bg-gray-50">
+            <Navbar />
+            <Routes>
+              <Route path="/login" element={<Login />} />
             <Route
               path="/"
               element={
@@ -88,7 +90,8 @@ function App() {
               }
             />
           </Routes>
-        </div>
+          </div>
+        </InactivityHandler>
       </Router>
       </QuestionnaireProvider>
     </AuthProvider>

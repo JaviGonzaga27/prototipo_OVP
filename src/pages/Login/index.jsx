@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
   EnvelopeIcon, 
@@ -19,8 +19,22 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [infoMessage, setInfoMessage] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, register } = useAuth();
+
+  // Mostrar mensaje de timeout si viene del state
+  useEffect(() => {
+    if (location.state?.message) {
+      setInfoMessage(location.state.message);
+      // Limpiar el mensaje después de 5 segundos
+      const timer = setTimeout(() => {
+        setInfoMessage('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [location.state]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -100,6 +114,13 @@ const Login = () => {
           )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {infoMessage && (
+              <div className="bg-amber-50 text-amber-800 p-4 rounded-xl flex items-center border border-amber-200">
+                <ExclamationCircleIcon className="w-5 h-5 mr-2 flex-shrink-0" />
+                <span className="text-sm">{infoMessage}</span>
+              </div>
+            )}
+            
             {error && (
               <div className="bg-red-50 text-red-700 p-4 rounded-xl flex items-center">
                 <ExclamationCircleIcon className="w-5 h-5 mr-2" />
