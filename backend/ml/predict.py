@@ -30,8 +30,8 @@ SCRIPT_DIR = Path(__file__).parent
 def load_models():
     """Carga el modelo y el label encoder."""
     try:
-        modelo_path = SCRIPT_DIR / 'modelo_random_forest.pkl'
-        encoder_path = SCRIPT_DIR / 'label_encoder.pkl'
+        modelo_path = SCRIPT_DIR / 'modelo_rf_17carreras.pkl'
+        encoder_path = SCRIPT_DIR / 'label_encoder_17carreras.pkl'
         
         if not modelo_path.exists():
             raise FileNotFoundError(f"No se encuentra el modelo en: {modelo_path}")
