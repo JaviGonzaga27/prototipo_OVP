@@ -1,0 +1,662 @@
+{
+	"info": {
+		"_postman_id": "ovp-api-collection-2024",
+		"name": "OVP API - Sistema de Orientación Vocacional",
+		"description": "Colección completa de endpoints para el Sistema de Orientación Vocacional Profesional.\n\n**Instrucciones de uso:**\n1. Primero ejecuta el endpoint de Login para obtener el token\n2. El token se guardará automáticamente en la variable de entorno {{authToken}}\n3. Para endpoints de admin, usa el login de admin\n\n**Variables de entorno necesarias:**\n- baseUrl: http://localhost:5000/api\n- authToken: (se establece automáticamente al hacer login)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth - Autenticación",
+			"item": [
+				{
+					"name": "Registro de Usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.token) {",
+									"        pm.environment.set(\"authToken\", jsonData.token);",
+									"        console.log(\"Token guardado automáticamente\");",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Juan\",\n  \"lastName\": \"Pérez\",\n  \"email\": \"juan.perez@example.com\",\n  \"password\": \"Password123!\",\n  \"age\": 17,\n  \"grade\": \"3° Bachillerato\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "register"]
+						},
+						"description": "Registra un nuevo usuario estudiante en el sistema."
+					},
+					"response": []
+				},
+				{
+					"name": "Login de Usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.token) {",
+									"        pm.environment.set(\"authToken\", jsonData.token);",
+									"        console.log(\"Token guardado: \" + jsonData.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"juan.perez@example.com\",\n  \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Inicia sesión y obtiene un token JWT. El token se guarda automáticamente."
+					},
+					"response": []
+				},
+				{
+					"name": "Login de Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.token) {",
+									"        pm.environment.set(\"authToken\", jsonData.token);",
+									"        console.log(\"Token de admin guardado\");",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@ovp.com\",\n  \"password\": \"Admin123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Login para usuario administrador. Necesario para endpoints administrativos."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Mi Perfil",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "me"]
+						},
+						"description": "Obtiene la información del usuario autenticado actual."
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar Contraseña",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"currentPassword\": \"Password123!\",\n  \"newPassword\": \"NewPassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/change-password",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "change-password"]
+						},
+						"description": "Cambia la contraseña del usuario autenticado."
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Perfil",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Juan Carlos\",\n  \"lastName\": \"Pérez García\",\n  \"age\": 18,\n  \"grade\": \"1° Universidad\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/update-profile",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "update-profile"]
+						},
+						"description": "Actualiza la información del perfil del usuario."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints relacionados con autenticación y gestión de perfil de usuario."
+		},
+		{
+			"name": "Test - Predicciones y Resultados",
+			"item": [
+				{
+					"name": "Realizar Predicción ML",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"answers\": {\n    \"q1\": 4, \"q2\": 5, \"q3\": 3, \"q4\": 4, \"q5\": 5,\n    \"q6\": 5, \"q7\": 4, \"q8\": 5, \"q9\": 3, \"q10\": 4,\n    \"q11\": 3, \"q12\": 2, \"q13\": 3, \"q14\": 2, \"q15\": 3,\n    \"q16\": 4, \"q17\": 5, \"q18\": 4, \"q19\": 5, \"q20\": 4,\n    \"q21\": 4, \"q22\": 3, \"q23\": 4, \"q24\": 3, \"q25\": 4,\n    \"q26\": 3, \"q27\": 4, \"q28\": 3, \"q29\": 4, \"q30\": 3,\n    \"q31\": 5, \"q32\": 4, \"q33\": 5, \"q34\": 4,\n    \"q35\": 3, \"q36\": 4, \"q37\": 3, \"q38\": 4,\n    \"q39\": 2, \"q40\": 3, \"q41\": 2, \"q42\": 3,\n    \"q43\": 4, \"q44\": 5, \"q45\": 4, \"q46\": 5,\n    \"q47\": 4, \"q48\": 3, \"q49\": 4, \"q50\": 3,\n    \"q51\": 4, \"q52\": 5, \"q53\": 4, \"q54\": 5,\n    \"q55\": 3, \"q56\": 4, \"q57\": 3, \"q58\": 4,\n    \"q59\": 2, \"q60\": 3, \"q61\": 2, \"q62\": 3,\n    \"q63\": 4, \"q64\": 5, \"q65\": 3\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/test/predict",
+							"host": ["{{baseUrl}}"],
+							"path": ["test", "predict"]
+						},
+						"description": "Realiza una predicción de carrera usando Machine Learning basada en las 65 respuestas del test. Valores de 1 a 5."
+					},
+					"response": []
+				},
+				{
+					"name": "Guardar Resultados (Legacy)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"answers\": {\n    \"q1\": 4, \"q2\": 5, \"q3\": 3\n  },\n  \"results\": {\n    \"recommendedCareer\": \"Ingeniería en Sistemas\",\n    \"confidence\": 0.85\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/test/results",
+							"host": ["{{baseUrl}}"],
+							"path": ["test", "results"]
+						},
+						"description": "Método legacy para guardar resultados sin usar ML."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Mis Resultados",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/test/my-results",
+							"host": ["{{baseUrl}}"],
+							"path": ["test", "my-results"]
+						},
+						"description": "Obtiene todos los resultados de tests del usuario autenticado."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Resultado por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/test/results/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["test", "results", "1"]
+						},
+						"description": "Obtiene un resultado específico por su ID. Reemplaza '1' con el ID deseado."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para realizar predicciones con ML y gestionar resultados de tests."
+		},
+		{
+			"name": "Questions - Cuestionario",
+			"item": [
+				{
+					"name": "Obtener Preguntas Activas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/questions",
+							"host": ["{{baseUrl}}"],
+							"path": ["questions"]
+						},
+						"description": "Obtiene todas las preguntas activas del cuestionario (disponibles para estudiantes)."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Preguntas Agrupadas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/questions/grouped",
+							"host": ["{{baseUrl}}"],
+							"path": ["questions", "grouped"]
+						},
+						"description": "Obtiene las preguntas agrupadas por categoría (RIASEC, Gardner, Rendimiento)."
+					},
+					"response": []
+				},
+				{
+					"name": "[ADMIN] Obtener Todas las Preguntas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"description": "Requiere token de admin"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/questions/all",
+							"host": ["{{baseUrl}}"],
+							"path": ["questions", "all"]
+						},
+						"description": "Obtiene todas las preguntas (activas e inactivas). Solo administradores."
+					},
+					"response": []
+				},
+				{
+					"name": "[ADMIN] Obtener Pregunta por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/questions/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["questions", "1"]
+						},
+						"description": "Obtiene una pregunta específica por su ID. Solo administradores."
+					},
+					"response": []
+				},
+				{
+					"name": "[ADMIN] Crear Pregunta",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"questionNumber\": 66,\n  \"category\": \"RIASEC\",\n  \"subcategory\": \"R\",\n  \"questionText\": \"¿Te gusta trabajar con herramientas?\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/questions",
+							"host": ["{{baseUrl}}"],
+							"path": ["questions"]
+						},
+						"description": "Crea una nueva pregunta. Solo administradores."
+					},
+					"response": []
+				},
+				{
+					"name": "[ADMIN] Actualizar Pregunta",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"questionText\": \"¿Te interesa trabajar con herramientas y maquinaria?\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/questions/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["questions", "1"]
+						},
+						"description": "Actualiza una pregunta existente. Solo administradores."
+					},
+					"response": []
+				},
+				{
+					"name": "[ADMIN] Eliminar Pregunta",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/questions/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["questions", "1"]
+						},
+						"description": "Elimina una pregunta permanentemente. Solo administradores."
+					},
+					"response": []
+				},
+				{
+					"name": "[ADMIN] Activar/Desactivar Pregunta",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/questions/1/toggle",
+							"host": ["{{baseUrl}}"],
+							"path": ["questions", "1", "toggle"]
+						},
+						"description": "Alterna el estado activo/inactivo de una pregunta. Solo administradores."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para gestionar el cuestionario y sus preguntas."
+		},
+		{
+			"name": "Admin - Administración",
+			"item": [
+				{
+					"name": "Obtener Estadísticas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"description": "Token de admin requerido"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/stats",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "stats"]
+						},
+						"description": "Obtiene estadísticas generales del sistema (usuarios, tests, carreras populares)."
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Todos los Usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "users"]
+						},
+						"description": "Lista todos los usuarios del sistema. Solo administradores."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Usuario por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/users/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "users", "1"]
+						},
+						"description": "Obtiene información detallada de un usuario específico."
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Usuario",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Juan Carlos\",\n  \"lastName\": \"Pérez\",\n  \"email\": \"juan.nuevo@example.com\",\n  \"role\": \"student\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/users/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "users", "1"]
+						},
+						"description": "Actualiza información de un usuario. Solo administradores."
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Usuario",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/users/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "users", "1"]
+						},
+						"description": "Elimina un usuario permanentemente del sistema."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Todos los Resultados",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/results",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "results"]
+						},
+						"description": "Obtiene todos los resultados de tests de todos los usuarios."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Resultados de Usuario",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/results/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "results", "1"]
+						},
+						"description": "Obtiene todos los resultados de tests de un usuario específico por su userId."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints administrativos para gestión de usuarios, resultados y estadísticas. Requieren permisos de administrador."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

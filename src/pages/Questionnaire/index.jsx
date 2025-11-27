@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getQuestions, predictCareer } from '../../services/auth';
 
+const STORAGE_KEY = 'ovp_questionnaire_progress';
+
 const Questionnaire = () => {
   const navigate = useNavigate();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   
   const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -16,8 +18,10 @@ const Questionnaire = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [validationError, setValidationError] = useState(null);
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
+  const [savedProgress, setSavedProgress] = useState(null);
 
-  // Cargar preguntas desde el backend
+  // Cargar preguntas desde el backend y verificar si hay progreso guardado
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -26,6 +30,28 @@ const Questionnaire = () => {
         
         if (data.success && data.questions) {
           setQuestions(data.questions);
+          
+          // Verificar si hay progreso guardado
+          const saved = localStorage.getItem(`${STORAGE_KEY}_${user?.id}`);
+          if (saved) {
+            try {
+              const progress = JSON.parse(saved);
+              // Verificar que el progreso no sea muy antiguo (más de 7 días)
+              const savedDate = new Date(progress.timestamp);
+              const daysDiff = (Date.now() - savedDate.getTime()) / (1000 * 60 * 60 * 24);
+              
+              if (daysDiff < 7 && Object.keys(progress.answers).length > 0) {
+                setSavedProgress(progress);
+                setShowRestoreModal(true);
+              } else {
+                // Limpiar progreso antiguo
+                localStorage.removeItem(`${STORAGE_KEY}_${user?.id}`);
+              }
+            } catch (e) {
+              console.error('Error al cargar progreso guardado:', e);
+              localStorage.removeItem(`${STORAGE_KEY}_${user?.id}`);
+            }
+          }
         } else {
           setError('No se pudieron cargar las preguntas');
         }
@@ -38,7 +64,41 @@ const Questionnaire = () => {
     };
 
     fetchQuestions();
-  }, [token]);
+  }, [token, user?.id]);
+
+  // Guardar progreso automáticamente cuando cambien las respuestas o la pregunta actual
+  useEffect(() => {
+    if (questions.length > 0 && Object.keys(answers).length > 0 && user?.id) {
+      const progress = {
+        answers,
+        currentQuestion,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem(`${STORAGE_KEY}_${user.id}`, JSON.stringify(progress));
+    }
+  }, [answers, currentQuestion, questions, user?.id]);
+
+  // Funciones para manejar el modal de restauración
+  const handleRestoreProgress = () => {
+    if (savedProgress) {
+      setAnswers(savedProgress.answers);
+      setCurrentQuestion(savedProgress.currentQuestion);
+      const currentQ = questions[savedProgress.currentQuestion];
+      if (currentQ) {
+        setCurrentAnswer(savedProgress.answers[`q${currentQ.order}`] || null);
+      }
+    }
+    setShowRestoreModal(false);
+  };
+
+  const handleStartNew = () => {
+    localStorage.removeItem(`${STORAGE_KEY}_${user?.id}`);
+    setSavedProgress(null);
+    setAnswers({});
+    setCurrentQuestion(0);
+    setCurrentAnswer(null);
+    setShowRestoreModal(false);
+  };
 
   const handleAnswer = (option) => {
     setCurrentAnswer(option.value);
@@ -50,17 +110,17 @@ const Questionnaire = () => {
       return;
     }
 
-    // Guardar respuesta actual (usando el id de la pregunta como key)
+    // Guardar respuesta actual (usando el order de la pregunta como key: q1, q2, q3...)
     const newAnswers = {
       ...answers,
-      [`q${questions[currentQuestion].id}`]: currentAnswer
+      [`q${questions[currentQuestion].order}`]: currentAnswer
     };
     setAnswers(newAnswers);
 
     // Si es la última pregunta, validar que todas estén respondidas
     if (currentQuestion === questions.length - 1) {
       // Verificar que todas las preguntas tengan respuesta
-      const unansweredQuestions = questions.filter(q => newAnswers[`q${q.id}`] === undefined);
+      const unansweredQuestions = questions.filter(q => newAnswers[`q${q.order}`] === undefined);
       
       if (unansweredQuestions.length > 0) {
         setValidationError(`Aún tienes ${unansweredQuestions.length} pregunta(s) sin responder. Por favor, completa todas las preguntas antes de finalizar.`);
@@ -75,6 +135,9 @@ const Questionnaire = () => {
         const predictionData = await predictCareer(token, newAnswers);
         
         if (predictionData.success) {
+          // Limpiar progreso guardado al completar exitosamente
+          localStorage.removeItem(`${STORAGE_KEY}_${user?.id}`);
+          
           // Navegar a resultados con la predicción
           navigate('/results', { 
             state: { 
@@ -93,8 +156,12 @@ const Questionnaire = () => {
       }
     } else {
       // Avanzar a la siguiente pregunta
-      setCurrentQuestion(currentQuestion + 1);
-      setCurrentAnswer(null);
+      const nextQuestionIndex = currentQuestion + 1;
+      setCurrentQuestion(nextQuestionIndex);
+      
+      // Restaurar respuesta de la siguiente pregunta si existe
+      const nextAnswer = newAnswers[`q${questions[nextQuestionIndex].order}`];
+      setCurrentAnswer(nextAnswer !== undefined ? nextAnswer : null);
     }
   };
 
@@ -102,7 +169,7 @@ const Questionnaire = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
       // Restaurar respuesta anterior si existe
-      const previousAnswer = answers[`q${questions[currentQuestion - 1].id}`];
+      const previousAnswer = answers[`q${questions[currentQuestion - 1].order}`];
       setCurrentAnswer(previousAnswer !== undefined ? previousAnswer : null);
     }
   };
@@ -166,12 +233,52 @@ const Questionnaire = () => {
   const goToQuestion = (index) => {
     // Permitir navegar a cualquier pregunta
     setCurrentQuestion(index);
-    setCurrentAnswer(answers[`q${questions[index].id}`] || null);
+    setCurrentAnswer(answers[`q${questions[index].order}`] || null);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 py-4 lg:py-8 px-4">
       <div className="max-w-7xl mx-auto">
+        {/* Modal de restauración de progreso */}
+        {showRestoreModal && savedProgress && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 animate-fade-in">
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <svg className="w-12 h-12 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Progreso encontrado
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Encontramos un test en progreso con <span className="font-semibold text-indigo-600">{Object.keys(savedProgress.answers).length} respuestas</span> guardadas en la pregunta {savedProgress.currentQuestion + 1}.
+                  </p>
+                  <p className="text-sm text-gray-600 mb-4">
+                    ¿Quieres continuar donde lo dejaste?
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <button
+                      onClick={handleRestoreProgress}
+                      className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+                    >
+                      Continuar test
+                    </button>
+                    <button
+                      onClick={handleStartNew}
+                      className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                    >
+                      Empezar nuevo
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Mensaje de validación */}
         {validationError && (
           <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
@@ -218,7 +325,7 @@ const Questionnaire = () => {
               
               <div className="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-5 gap-2 overflow-y-auto pb-2" style={{ maxHeight: 'calc(min(300px, 40vh) - 120px)' }}>
                 {questions.map((q, index) => {
-                  const isAnswered = answers[`q${q.id}`] !== undefined;
+                  const isAnswered = answers[`q${q.order}`] !== undefined;
                   const isCurrent = index === currentQuestion;
                   
                   return (

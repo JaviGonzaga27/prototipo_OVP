@@ -8,7 +8,7 @@ const questions = [
   
   // R - REALISTA (5 preguntas)
   {
-    text: '¿Te gusta trabajar con herramientas, máquinas o equipos?',
+    text: '¿Te gusta reparar o arreglar cosas cuando se dañan?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -31,7 +31,7 @@ const questions = [
     }
   },
   {
-    text: '¿Prefieres actividades al aire libre o trabajos físicos?',
+    text: '¿Prefieres hacer proyectos prácticos como sembrar plantas o construir algo en tecnología?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -45,7 +45,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te interesa construir, reparar o ensamblar cosas?',
+    text: '¿Disfrutas las clases en laboratorios o talleres donde usas materiales y herramientas?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -59,7 +59,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Disfrutas trabajando con materiales concretos?',
+    text: '¿Sientes satisfacción al ayudar en actividades físicas, como deportes o proyectos de limpieza en tu barrio?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -73,7 +73,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Prefieres resolver problemas de forma práctica?',
+    text: '¿Te interesaría trabajar en profesiones técnicas, agrícolas o mecánicas en el futuro?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -89,7 +89,7 @@ const questions = [
 
   // I - INVESTIGATIVO (5 preguntas)
   {
-    text: '¿Te gusta analizar datos o problemas complejos?',
+    text: '¿Te gusta investigar temas nuevos para tus tareas o proyectos escolares?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -103,7 +103,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Disfrutas realizar experimentos científicos?',
+    text: '¿Disfrutas experimentar en clase de ciencias, buscando cómo y por qué ocurren cosas?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -117,7 +117,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te interesa entender cómo funcionan las cosas?',
+    text: '¿Prefieres analizar y resolver problemas matemáticos o científicos?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -131,7 +131,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Prefieres trabajar con conceptos abstractos?',
+    text: '¿Te interesa ver documentales sobre ciencia, tecnología o descubrimientos?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -145,7 +145,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te motiva resolver problemas con lógica?',
+    text: '¿Te gustaría seguir carreras como medicina, ingeniería, informática o investigación científica?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -161,7 +161,7 @@ const questions = [
 
   // A - ARTÍSTICO (5 preguntas)
   {
-    text: '¿Te gusta expresarte a través del arte o música?',
+    text: '¿Te gusta participar en obras de teatro, festivales musicales o concursos artísticos?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -175,7 +175,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Disfrutas diseñar o crear cosas?',
+    text: '¿Prefieres trabajos creativos, como diseñar carteles, pintar o inventar historias?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -189,7 +189,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Prefieres trabajos creativos y originales?',
+    text: '¿Te gusta crear tus propios proyectos artísticos, musicales o audiovisuales?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -203,7 +203,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te interesa la estética y diseño?',
+    text: '¿Disfrutas expresar tus ideas y emociones a través del arte, la música o la escritura?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -217,7 +217,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te motiva trabajar en proyectos artísticos?',
+    text: '¿Te interesaría estudiar diseño, arquitectura, música, actuación o literatura?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -233,7 +233,7 @@ const questions = [
 
   // S - SOCIAL (5 preguntas)
   {
-    text: '¿Te gusta ayudar a otras personas?',
+    text: '¿Te gusta ayudar a tus compañeros, apoyar a quienes tienen dificultades, o participar en voluntariados escolares?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -247,7 +247,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Disfrutas enseñar o capacitar a otros?',
+    text: '¿Disfrutas dar tutorías, explicar tareas o motivar a otros en tu grupo?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -261,7 +261,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Prefieres trabajar en equipo?',
+    text: '¿Prefieres actividades donde puedes colaborar y convivir con personas?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -275,7 +275,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te interesa el bienestar de las personas?',
+    text: '¿Te gusta organizar campañas de ayuda social, convivencias o eventos en tu colegio?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -289,7 +289,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te motiva el servicio comunitario?',
+    text: '¿Te interesan carreras como pedagogía, psicología, trabajo social o enfermería?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -305,7 +305,7 @@ const questions = [
 
   // E - EMPRENDEDOR (5 preguntas)
   {
-    text: '¿Te gusta liderar grupos o proyectos?',
+    text: '¿Te inspiran a liderar proyectos estudiantiles, grupos de clase o actividades deportivas?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -319,7 +319,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Disfrutas persuadir a otras personas?',
+    text: '¿Te gusta organizar ventas escolares, ferias, o campañas para recolectar fondos?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -333,7 +333,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Prefieres tomar decisiones y asumir riesgos?',
+    text: '¿Prefieres tomar decisiones rápidas y proponer ideas en reuniones estudiantiles?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -347,7 +347,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te interesa iniciar tu propio negocio?',
+    text: '¿Disfrutas negociar y convencer a otros cuando tienes una meta?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -361,7 +361,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te motiva competir y alcanzar metas?',
+    text: '¿Visualizas tener un negocio, ser líder comunitario o trabajar en marketing en el futuro?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -377,7 +377,7 @@ const questions = [
 
   // C - CONVENCIONAL (5 preguntas)
   {
-    text: '¿Te gusta organizar información o documentos?',
+    text: '¿Te resulta fácil ordenar tus cuadernos, trabajos y materiales escolares?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -391,7 +391,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Disfrutas seguir procedimientos establecidos?',
+    text: '¿Prefieres seguir instrucciones claras en tus clases o proyectos?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -405,7 +405,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Prefieres trabajos que requieren precisión?',
+    text: '¿Te motiva participar en actividades administrativas, como ser secretario en el consejo estudiantil?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -419,7 +419,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te interesa trabajar con números y datos?',
+    text: '¿Disfrutas tareas donde puedas organizar información, datos o documentos de manera precisa?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -433,7 +433,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te motiva mantener sistemas ordenados?',
+    text: '¿Te gustaría trabajar en oficinas, bancos, instituciones públicas o contabilidad?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -448,12 +448,12 @@ const questions = [
   },
 
   // ============================================================================
-  // SECCIÓN 2: GARDNER (32 preguntas = 8 dimensiones × 4 preguntas)
+  // SECCIÓN 2: GARDNER (32 preguntas = 8 inteligencias × 4 preguntas)
   // ============================================================================
 
-  // LM - LÓGICO-MATEMÁTICA (4 preguntas)
+  // LM - Lógico-Matemática (4 preguntas)
   {
-    text: '¿Entiendes fácilmente conceptos matemáticos?',
+    text: '¿Resuelves rápidamente ejercicios de matemáticas o acertijos en clase?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -467,7 +467,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te gusta resolver problemas de lógica?',
+    text: '¿Te gusta analizar problemas y buscar soluciones utilizando lógica?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -481,7 +481,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Eres bueno identificando patrones?',
+    text: '¿Te interesan actividades como concursos matemáticos, feria de ciencias o juegos de estrategia?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -495,7 +495,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Disfrutas trabajando con cálculos?',
+    text: '¿Sientes curiosidad al ver noticias sobre tecnología, ciencias o inventos?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -509,9 +509,9 @@ const questions = [
     isActive: true
   },
 
-  // L - LINGÜÍSTICA (4 preguntas)
+  // L - Lingüística (4 preguntas)
   {
-    text: '¿Se te facilita expresarte con palabras?',
+    text: '¿Te resulta fácil escribir cuentos, mensajes o reflexiones?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -525,7 +525,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Disfrutas leer, escribir o debatir?',
+    text: '¿Disfrutas leer novelas, revistas o publicaciones?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -539,7 +539,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Tienes buen vocabulario?',
+    text: '¿Te gusta participar en debates, exposiciones o leer en voz alta en clase?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -553,7 +553,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te gusta contar historias?',
+    text: '¿Te identificas expresando tus ideas con precisión al conversar con tus compañeros o familiares?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -567,9 +567,9 @@ const questions = [
     isActive: true
   },
 
-  // ES - ESPACIAL (4 preguntas)
+  // ES - Espacial (4 preguntas)
   {
-    text: '¿Visualizas fácilmente objetos en 3D?',
+    text: '¿Disfrutas dibujar paisajes, mapas, planos o figuras geométricas visibles en tu entorno?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -583,7 +583,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te orientas bien en espacios?',
+    text: '¿Te motiva crear diseños para campañas escolares, redes sociales o instituciones del barrio?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -597,7 +597,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Eres bueno dibujando o diseñando?',
+    text: '¿Imaginas cómo cambiaría un objeto si lo modificas o miras desde otro ángulo?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -611,7 +611,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Disfrutas trabajar con imágenes?',
+    text: '¿Armas fácilmente rompecabezas o modelos tridimensionales?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -625,9 +625,9 @@ const questions = [
     isActive: true
   },
 
-  // M - MUSICAL (4 preguntas)
+  // M - Musical (4 preguntas)
   {
-    text: '¿Tienes buen sentido del ritmo?',
+    text: '¿Te gusta cantar o participar en actividades musicales?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -641,7 +641,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Disfrutas la música?',
+    text: '¿Identificas fácilmente ritmos y melodías en la música?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -655,7 +655,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Reconoces fácilmente tonos musicales?',
+    text: '¿Te interesa tocar instrumentos o crear tu propia música?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -669,7 +669,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te expresas mejor con música?',
+    text: '¿Reconoces fácilmente diferentes géneros musicales?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -683,9 +683,9 @@ const questions = [
     isActive: true
   },
 
-  // CK - CORPORAL-KINESTÉSICA (4 preguntas)
+  // CK - Corporal-Kinestésica (4 preguntas)
   {
-    text: '¿Tienes buena coordinación corporal?',
+    text: '¿Te gustan los deportes, el baile o actividades físicas?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -699,7 +699,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Disfrutas actividades físicas?',
+    text: '¿Aprendes mejor haciendo experimentos, manualidades o tareas prácticas?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -713,7 +713,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Aprendes mejor haciendo?',
+    text: '¿Te gusta participar en actividades recreativas, deportes intercolegiales o campeonatos?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -727,7 +727,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Eres hábil con manualidades?',
+    text: '¿Tienes habilidad para expresar ideas mediante movimientos o gestos en presentaciones escolares?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -741,9 +741,9 @@ const questions = [
     isActive: true
   },
 
-  // IP - INTERPERSONAL (4 preguntas)
+  // IP - Interpersonal (4 preguntas)
   {
-    text: '¿Entiendes las emociones de otros?',
+    text: '¿Colaboras activamente en grupo, creando buen ambiente entre compañeros y profesores?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -757,7 +757,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Disfrutas trabajar en equipo?',
+    text: '¿Facilitas la solución de conflictos y apoyas a quienes se sienten solos en tu clase?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -771,7 +771,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Eres bueno resolviendo conflictos?',
+    text: '¿Te motiva ayudar a organizar eventos, fiestas escolares o proyectos comunitarios?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -785,7 +785,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te adaptas a diferentes personalidades?',
+    text: '¿Comprendes bien las emociones y necesidades de las personas a tu alrededor?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -799,9 +799,9 @@ const questions = [
     isActive: true
   },
 
-  // IA - INTRAPERSONAL (4 preguntas)
+  // IA - Intrapersonal (4 preguntas)
   {
-    text: '¿Conoces bien tus emociones?',
+    text: '¿Reflexionas sobre tus metas personales y sueños para el futuro?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -815,7 +815,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Prefieres trabajar independientemente?',
+    text: '¿Analizas tus propias fortalezas y debilidades al decidir qué estudiar o en qué participar?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -829,7 +829,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Reflexionas sobre tus metas?',
+    text: '¿Prefieres a veces trabajar solo y tomarte tiempo para pensar en tus decisiones?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -843,7 +843,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Eres autodisciplinado?',
+    text: '¿Buscas mejorar personalmente en actividades extracurriculares o académicas?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -857,9 +857,9 @@ const questions = [
     isActive: true
   },
 
-  // N - NATURALISTA (4 preguntas)
+  // N - Naturalista (4 preguntas)
   {
-    text: '¿Te interesa la naturaleza?',
+    text: '¿Te interesa conocer sobre la biodiversidad, animales y plantas?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -873,7 +873,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Disfrutas actividades al aire libre?',
+    text: '¿Participas en proyectos de reciclaje, cuidado ambiental o excursiones?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -887,7 +887,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Reconoces elementos naturales?',
+    text: '¿Reconoces fácilmente tipos de flora y fauna?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -901,7 +901,7 @@ const questions = [
     isActive: true
   },
   {
-    text: '¿Te preocupa el medio ambiente?',
+    text: '¿Te preocupa el futuro del ambiente y promueves hábitos ecológicos entre tus amigos?',
     options: [
       { value: 1, label: 'Nada' },
       { value: 2, label: 'Poco' },
@@ -920,85 +920,63 @@ const questions = [
   // ============================================================================
 
   {
-    text: '¿Cómo calificarías tu rendimiento académico general?',
+    text: '¿Cómo calificarías tu desempeño global en todas las materias escolares este año?',
     options: [
-      { value: 1, label: 'Deficiente' },
-      { value: 2, label: 'Regular' },
-      { value: 3, label: 'Bueno' },
-      { value: 4, label: 'Muy Bueno' },
-      { value: 5, label: 'Sobresaliente' }
+      { value: 1, label: 'Muy bajo' },
+      { value: 2, label: 'Bajo' },
+      { value: 3, label: 'Regular' },
+      { value: 4, label: 'Bueno' },
+      { value: 5, label: 'Excelente' }
     ],
     category: 'Rendimiento',
     dimension: 'General',
     order: 63,
-    isActive: true,
-    scaleLabels: {
-      1: 'Deficiente',
-      2: 'Regular',
-      3: 'Bueno',
-      4: 'Muy Bueno',
-      5: 'Sobresaliente'
-    }
+    isActive: true
   },
   {
-    text: '¿Cómo es tu rendimiento en Matemáticas/Ciencias?',
+    text: '¿Cómo consideras tu rendimiento en Matemáticas, Física, Química o Biología durante el colegio?',
     options: [
-      { value: 1, label: 'Deficiente' },
-      { value: 2, label: 'Regular' },
-      { value: 3, label: 'Bueno' },
-      { value: 4, label: 'Muy Bueno' },
-      { value: 5, label: 'Sobresaliente' }
+      { value: 1, label: 'Muy bajo' },
+      { value: 2, label: 'Bajo' },
+      { value: 3, label: 'Regular' },
+      { value: 4, label: 'Bueno' },
+      { value: 5, label: 'Excelente' }
     ],
     category: 'Rendimiento',
     dimension: 'STEM',
     order: 64,
-    isActive: true,
-    scaleLabels: {
-      1: 'Deficiente',
-      2: 'Regular',
-      3: 'Bueno',
-      4: 'Muy Bueno',
-      5: 'Sobresaliente'
-    }
+    isActive: true
   },
   {
-    text: '¿Cómo es tu rendimiento en Lengua/Historia/Filosofía?',
+    text: '¿Cómo evaluarías tu rendimiento en Lengua, Literatura, Historia o Filosofía en tus clases?',
     options: [
-      { value: 1, label: 'Deficiente' },
-      { value: 2, label: 'Regular' },
-      { value: 3, label: 'Bueno' },
-      { value: 4, label: 'Muy Bueno' },
-      { value: 5, label: 'Sobresaliente' }
+      { value: 1, label: 'Muy bajo' },
+      { value: 2, label: 'Bajo' },
+      { value: 3, label: 'Regular' },
+      { value: 4, label: 'Bueno' },
+      { value: 5, label: 'Excelente' }
     ],
     category: 'Rendimiento',
     dimension: 'Humanidades',
     order: 65,
-    isActive: true,
-    scaleLabels: {
-      1: 'Deficiente',
-      2: 'Regular',
-      3: 'Bueno',
-      4: 'Muy Bueno',
-      5: 'Sobresaliente'
-    }
+    isActive: true
   }
 ];
 
 async function populateQuestions() {
   try {
-    console.log('🔄 Conectando a la base de datos...');
     await sequelize.authenticate();
-    console.log('✅ Conexión exitosa a la base de datos');
+    console.log('✅ Conexión a la base de datos establecida');
 
-    console.log('🔄 Sincronizando modelo Question...');
-    await Question.sync({ alter: true });
-    console.log('✅ Modelo sincronizado');
+    // Sincronizar modelo
+    await Question.sync();
 
-    console.log('🗑️  Limpiando preguntas existentes...');
+    // Limpiar preguntas existentes
+    console.log('🗑️  Eliminando preguntas existentes...');
     await Question.destroy({ where: {}, truncate: true });
     console.log('✅ Preguntas existentes eliminadas');
 
-    console.log('📝 Insertando 65 preguntas del test vocacional...');
+    console.log('📝 Insertando 65 preguntas del test vocacional (versión mejorada)...');
     await Question.bulkCreate(questions);
     console.log('✅ 65 preguntas insertadas correctamente');
 
@@ -1012,11 +990,14 @@ async function populateQuestions() {
     const rendimientoCount = await Question.count({ where: { category: 'Rendimiento' } });
 
     console.log('\n📈 RESUMEN POR CATEGORÍA:');
-    console.log(`   RIASEC: ${riasecCount} preguntas`);
-    console.log(`   Gardner: ${gardnerCount} preguntas`);
+    console.log(`   RIASEC: ${riasecCount} preguntas (6 dimensiones × 5 preguntas)`);
+    console.log(`   Gardner: ${gardnerCount} preguntas (8 inteligencias × 4 preguntas)`);
     console.log(`   Rendimiento: ${rendimientoCount} preguntas`);
 
     console.log('\n✨ Proceso completado exitosamente');
+    console.log('\n📋 NOTA: Las preguntas han sido actualizadas con formulación mejorada');
+    console.log('   orientada a estudiantes de bachillerato en contexto escolar.');
+    
     process.exit(0);
   } catch (error) {
     console.error('❌ Error al poblar preguntas:', error);

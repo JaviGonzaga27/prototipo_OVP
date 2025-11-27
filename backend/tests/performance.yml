@@ -1,0 +1,134 @@
+# Configuración de pruebas de rendimiento
+# Ejecutar con: artillery run performance.yml
+
+config:
+  target: "http://localhost:5000"
+  phases:
+    # Fase 1: Warmup - 10 usuarios durante 30 segundos
+    - duration: 30
+      arrivalRate: 10
+      name: "Warmup"
+    
+    # Fase 2: Carga normal - 50 usuarios durante 60 segundos
+    - duration: 60
+      arrivalRate: 50
+      name: "Normal load"
+    
+    # Fase 3: Carga alta - 100 usuarios durante 60 segundos
+    - duration: 60
+      arrivalRate: 100
+      name: "High load"
+    
+    # Fase 4: Pico - 200 usuarios durante 30 segundos
+    - duration: 30
+      arrivalRate: 200
+      name: "Spike"
+  
+  # Métricas objetivo según el plan de pruebas
+  ensure:
+    p95: 200  # 95% de requests < 200ms
+    p99: 500  # 99% de requests < 500ms
+    maxErrorRate: 1  # Máximo 1% de errores
+
+scenarios:
+  # Escenario 1: Flujo completo de usuario
+  - name: "Flujo completo de usuario"
+    weight: 50
+    flow:
+      # Registro
+      - post:
+          url: "/api/auth/register"
+          json:
+            name: "Test User {{ $randomString() }}"
+            email: "test-{{ $randomString() }}@test.com"
+            password: "password123"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+      
+      # Obtener preguntas
+      - get:
+          url: "/api/questions"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Simular tiempo pensando (2-5 segundos)
+      - think: 3
+      
+      # Enviar test
+      - post:
+          url: "/api/tests/submit"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            answers: [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]
+          capture:
+            - json: "$.testId"
+              as: "testId"
+      
+      # Ver resultados
+      - get:
+          url: "/api/tests/{{ testId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      
+      # Ver historial
+      - get:
+          url: "/api/tests/history"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  # Escenario 2: Login y navegación
+  - name: "Login y navegación"
+    weight: 30
+    flow:
+      # Login con usuario existente
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "testuser@test.com"
+            password: "password123"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+      
+      # Obtener preguntas múltiples veces
+      - loop:
+        - get:
+            url: "/api/questions"
+            headers:
+              Authorization: "Bearer {{ authToken }}"
+        - think: 1
+        count: 3
+
+  # Escenario 3: Admin operations
+  - name: "Operaciones admin"
+    weight: 20
+    flow:
+      # Login como admin
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "admin@test.com"
+            password: "admin123"
+          capture:
+            - json: "$.token"
+              as: "adminToken"
+      
+      # Obtener estadísticas
+      - get:
+          url: "/api/admin/stats"
+          headers:
+            Authorization: "Bearer {{ adminToken }}"
+      
+      # Listar usuarios
+      - get:
+          url: "/api/admin/users"
+          headers:
+            Authorization: "Bearer {{ adminToken }}"
+      
+      # Listar preguntas
+      - get:
+          url: "/api/admin/questions"
+          headers:
+            Authorization: "Bearer {{ adminToken }}"

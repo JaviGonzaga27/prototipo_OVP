@@ -229,87 +229,172 @@ const TestResultDetail = () => {
                 </div>
               </div>
 
-              {/* Layout de dos columnas para optimizar espacio */}
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                {/* Top 5 Carreras */}
-                <div>
-                  <h3 className="text-sm font-bold text-gray-900 mb-2 text-center">Top 5 Carreras</h3>
-                  <div className="space-y-1.5">
-                    {topCareers.slice(0, 5).map((career, index) => (
-                      <div key={index} className="flex items-center justify-between text-xs border-b border-gray-200 pb-1">
-                        <div className="flex items-center flex-1 min-w-0 mr-2">
-                          <span className="w-5 h-5 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-xs mr-2 flex-shrink-0">{index + 1}</span>
-                          <span className="font-medium text-gray-900 truncate">{career.carrera || career.name || career.career}</span>
-                        </div>
-                        <span className="font-bold text-indigo-600 flex-shrink-0">{career.porcentaje || career.percentage || career.score}%</span>
+              {/* Top 5 Carreras */}
+              <div className="mb-3">
+                <h3 className="text-sm font-bold text-gray-900 mb-2 text-center">Top 5 Carreras Compatibles</h3>
+                <div className="space-y-1.5">
+                  {topCareers.slice(0, 5).map((career, index) => (
+                    <div key={index} className="flex items-center justify-between text-xs border-b border-gray-200 pb-1">
+                      <div className="flex items-center flex-1 min-w-0 mr-2">
+                        <span className="w-5 h-5 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-xs mr-2 flex-shrink-0">{index + 1}</span>
+                        <span className="font-medium text-gray-900 truncate">{career.carrera || career.name || career.career}</span>
                       </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Perfiles */}
-                <div>
-                  {profile && Object.keys(profile).length > 0 && (
-                    <>
-                      <div className="mb-3">
-                        <h3 className="text-sm font-bold text-gray-900 mb-2 text-center">RIASEC</h3>
-                        <div className="grid grid-cols-6 gap-1">
-                          {['R', 'I', 'A', 'S', 'E', 'C'].map(dim => (
-                            <div key={dim} className="text-center border border-gray-200 rounded p-1">
-                              <p className="text-xs font-bold text-gray-700">{dim}</p>
-                              <p className="text-xs font-bold text-indigo-600">{profile[dim]?.toFixed(1) || 'N/A'}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div>
-                        <h3 className="text-sm font-bold text-gray-900 mb-2 text-center">Gardner</h3>
-                        <div className="grid grid-cols-4 gap-1">
-                          {['LM', 'L', 'ES', 'M', 'CK', 'IP', 'IA', 'N'].map(dim => (
-                            <div key={dim} className="text-center border border-gray-200 rounded p-1">
-                              <p className="text-xs font-bold text-gray-700">{dim}</p>
-                              <p className="text-xs font-bold text-green-600">{profile[dim]?.toFixed(1) || 'N/A'}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </>
-                  )}
+                      <span className="font-bold text-indigo-600 flex-shrink-0">{career.porcentaje || career.percentage || career.score}%</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Respuestas del Test - compacto */}
-              {questions.length > 0 && result.answers && (
-                <div className="mb-3">
-                  <h3 className="text-sm font-bold text-gray-900 mb-2 text-center">Respuestas del Test</h3>
-                  <div className="grid grid-cols-3 gap-1" style={{fontSize: '7pt'}}>
-                    {questions.map((question, index) => {
-                      const answer = result.answers[`q${question.id}`];
-                      if (!answer) return null;
-                      
-                      return (
-                        <div key={question.id} className="flex items-center justify-between border border-gray-200 rounded px-1 py-0.5">
-                          <span className="text-gray-600 mr-1">P{index + 1}</span>
-                          <span className={`font-bold ${
-                            answer >= 4 ? 'text-green-600' :
-                            answer >= 3 ? 'text-yellow-600' :
-                            answer >= 2 ? 'text-orange-600' :
-                            'text-red-600'
-                          }`}>{answer}/5</span>
-                        </div>
-                      );
-                    }).filter(Boolean)}
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 mt-2 text-center" style={{fontSize: '8pt'}}>
-                    <div className="bg-indigo-50 rounded p-1">
-                      <p className="text-gray-600">Total: <span className="font-bold text-indigo-600">{questions.length}</span></p>
+              {/* Perfiles con gráficos de pastel */}
+              {profile && Object.keys(profile).length > 0 && (
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  {/* RIASEC */}
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 mb-1 text-center">Perfil RIASEC</h3>
+                    <p className="text-xs text-gray-600 mb-2 text-center" style={{fontSize: '7pt'}}>
+                      Modelo de Holland que clasifica intereses vocacionales en seis tipos de personalidad laboral.
+                    </p>
+                    <div className="flex items-center gap-2">
+                      {/* Gráfico */}
+                      <div className="flex-shrink-0">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                          {(() => {
+                            const dimensions = [
+                              { code: 'R', name: 'Realista', color: '#3b82f6' },
+                              { code: 'I', name: 'Investigador', color: '#8b5cf6' },
+                              { code: 'A', name: 'Artístico', color: '#ec4899' },
+                              { code: 'S', name: 'Social', color: '#10b981' },
+                              { code: 'E', name: 'Emprendedor', color: '#f59e0b' },
+                              { code: 'C', name: 'Convencional', color: '#6366f1' }
+                            ];
+                            const total = dimensions.reduce((sum, dim) => sum + (profile[dim.code] || 0), 0);
+                            let currentAngle = -90;
+                            
+                            return dimensions.map((dim, index) => {
+                              const value = profile[dim.code] || 0;
+                              const percentage = total > 0 ? (value / total) * 100 : 0;
+                              const angle = (percentage / 100) * 360;
+                              const startAngle = currentAngle;
+                              const endAngle = currentAngle + angle;
+                              currentAngle = endAngle;
+                              
+                              const startRad = (startAngle * Math.PI) / 180;
+                              const endRad = (endAngle * Math.PI) / 180;
+                              const x1 = 60 + 55 * Math.cos(startRad);
+                              const y1 = 60 + 55 * Math.sin(startRad);
+                              const x2 = 60 + 55 * Math.cos(endRad);
+                              const y2 = 60 + 55 * Math.sin(endRad);
+                              const largeArc = angle > 180 ? 1 : 0;
+                              
+                              return (
+                                <path
+                                  key={dim.code}
+                                  d={`M 60 60 L ${x1} ${y1} A 55 55 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                                  fill={dim.color}
+                                  stroke="white"
+                                  strokeWidth="1"
+                                />
+                              );
+                            });
+                          })()}
+                        </svg>
+                      </div>
+                      {/* Leyenda */}
+                      <div className="flex-1 space-y-1" style={{fontSize: '7pt'}}>
+                        {[
+                          { code: 'R', name: 'Realista', color: '#3b82f6' },
+                          { code: 'I', name: 'Investigador', color: '#8b5cf6' },
+                          { code: 'A', name: 'Artístico', color: '#ec4899' },
+                          { code: 'S', name: 'Social', color: '#10b981' },
+                          { code: 'E', name: 'Emprendedor', color: '#f59e0b' },
+                          { code: 'C', name: 'Convencional', color: '#6366f1' }
+                        ].map(dim => (
+                          <div key={dim.code} className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="w-2.5 h-2.5 rounded-full mr-1.5 flex-shrink-0" style={{backgroundColor: dim.color}}></div>
+                              <span className="text-gray-700">{dim.name}</span>
+                            </div>
+                            <span className="font-bold text-gray-900 ml-1">{profile[dim.code]?.toFixed(1) || 'N/A'}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="bg-purple-50 rounded p-1">
-                      <p className="text-gray-600">Promedio: <span className="font-bold text-purple-600">
-                        {(Object.values(result.answers).filter(v => typeof v === 'number').reduce((a, b) => a + b, 0) / 
-                          Object.values(result.answers).filter(v => typeof v === 'number').length).toFixed(2)}/5
-                      </span></p>
+                  </div>
+
+                  {/* Gardner */}
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 mb-1 text-center">Inteligencias Múltiples</h3>
+                    <p className="text-xs text-gray-600 mb-2 text-center" style={{fontSize: '7pt'}}>
+                      Teoría de Gardner que identifica ocho tipos diferentes de inteligencias en el ser humano.
+                    </p>
+                    <div className="flex items-center gap-2">
+                      {/* Gráfico */}
+                      <div className="flex-shrink-0">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                          {(() => {
+                            const dimensions = [
+                              { code: 'LM', name: 'Lógico-Matemática', color: '#ef4444' },
+                              { code: 'L', name: 'Lingüística', color: '#f97316' },
+                              { code: 'ES', name: 'Espacial', color: '#eab308' },
+                              { code: 'M', name: 'Musical', color: '#84cc16' },
+                              { code: 'CK', name: 'Corporal-Cinética', color: '#22c55e' },
+                              { code: 'IP', name: 'Interpersonal', color: '#14b8a6' },
+                              { code: 'IA', name: 'Intrapersonal', color: '#06b6d4' },
+                              { code: 'N', name: 'Naturalista', color: '#8b5cf6' }
+                            ];
+                            const total = dimensions.reduce((sum, dim) => sum + (profile[dim.code] || 0), 0);
+                            let currentAngle = -90;
+                            
+                            return dimensions.map((dim, index) => {
+                              const value = profile[dim.code] || 0;
+                              const percentage = total > 0 ? (value / total) * 100 : 0;
+                              const angle = (percentage / 100) * 360;
+                              const startAngle = currentAngle;
+                              const endAngle = currentAngle + angle;
+                              currentAngle = endAngle;
+                              
+                              const startRad = (startAngle * Math.PI) / 180;
+                              const endRad = (endAngle * Math.PI) / 180;
+                              const x1 = 60 + 55 * Math.cos(startRad);
+                              const y1 = 60 + 55 * Math.sin(startRad);
+                              const x2 = 60 + 55 * Math.cos(endRad);
+                              const y2 = 60 + 55 * Math.sin(endRad);
+                              const largeArc = angle > 180 ? 1 : 0;
+                              
+                              return (
+                                <path
+                                  key={dim.code}
+                                  d={`M 60 60 L ${x1} ${y1} A 55 55 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                                  fill={dim.color}
+                                  stroke="white"
+                                  strokeWidth="1"
+                                />
+                              );
+                            });
+                          })()}
+                        </svg>
+                      </div>
+                      {/* Leyenda */}
+                      <div className="flex-1 space-y-0.5" style={{fontSize: '6.5pt'}}>
+                        {[
+                          { code: 'LM', name: 'Lógico-Matemática', color: '#ef4444' },
+                          { code: 'L', name: 'Lingüística', color: '#f97316' },
+                          { code: 'ES', name: 'Espacial', color: '#eab308' },
+                          { code: 'M', name: 'Musical', color: '#84cc16' },
+                          { code: 'CK', name: 'Corporal-Cinética', color: '#22c55e' },
+                          { code: 'IP', name: 'Interpersonal', color: '#14b8a6' },
+                          { code: 'IA', name: 'Intrapersonal', color: '#06b6d4' },
+                          { code: 'N', name: 'Naturalista', color: '#8b5cf6' }
+                        ].map(dim => (
+                          <div key={dim.code} className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="w-2 h-2 rounded-full mr-1 flex-shrink-0" style={{backgroundColor: dim.color}}></div>
+                              <span className="text-gray-700">{dim.name}</span>
+                            </div>
+                            <span className="font-bold text-gray-900 ml-1">{profile[dim.code]?.toFixed(1) || 'N/A'}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -484,7 +569,7 @@ const TestResultDetail = () => {
             {questions.length > 0 && result.answers ? (
               <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
                 {questions.map((question, index) => {
-                  const answer = result.answers[`q${question.id}`];
+                  const answer = result.answers[`q${question.order}`];
                   if (!answer) return null;
                   
                   // Colores por categoría

@@ -25,10 +25,17 @@ export const predictCareer = async (req, res) => {
       });
     }
 
-    console.log('✅ Respuestas validadas, iniciando predicción...');
+    console.log('✅ Respuestas validadas, calculando promedios...');
+    
+    // Calcular promedios si vienen respuestas individuales
+    let datosParaPrediccion = answers;
+    if (answers.q1 !== undefined) {
+      datosParaPrediccion = mlService.calcularPromedios(answers);
+      console.log('✅ Promedios calculados:', datosParaPrediccion);
+    }
     
     // Realizar predicción
-    const prediction = await mlService.predecir(answers);
+    const prediction = await mlService.predecir(datosParaPrediccion);
     
     console.log('✅ Predicción completada:', prediction.carrera_recomendada);
 
