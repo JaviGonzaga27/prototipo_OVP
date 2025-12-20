@@ -109,12 +109,7 @@ class MLService {
       CK: this._calcularPromedio(respuestas, [47, 48, 49, 50]),
       IP: this._calcularPromedio(respuestas, [51, 52, 53, 54]),
       IA: this._calcularPromedio(respuestas, [55, 56, 57, 58]),
-      N: this._calcularPromedio(respuestas, [59, 60, 61, 62]),
-      
-      // Rendimiento (no se promedian)
-      Rendimiento_General: respuestas.q63 || 0,
-      Rendimiento_STEM: respuestas.q64 || 0,
-      Rendimiento_Humanidades: respuestas.q65 || 0
+      N: this._calcularPromedio(respuestas, [59, 60, 61, 62])
     };
 
     return promedios;
@@ -138,7 +133,7 @@ class MLService {
   validarRespuestas(respuestas) {
     // Si vienen respuestas individuales (q1, q2, ...)
     if (respuestas.q1 !== undefined) {
-      for (let i = 1; i <= 65; i++) {
+      for (let i = 1; i <= 62; i++) {
         const valor = respuestas[`q${i}`];
         if (valor === undefined || valor === null) {
           return {
@@ -159,8 +154,7 @@ class MLService {
     // Si vienen promedios calculados
     const dimensionesRequeridas = [
       'R', 'I', 'A', 'S', 'E', 'C',
-      'LM', 'L', 'ES', 'M', 'CK', 'IP', 'IA', 'N',
-      'Rendimiento_General', 'Rendimiento_STEM', 'Rendimiento_Humanidades'
+      'LM', 'L', 'ES', 'M', 'CK', 'IP', 'IA', 'N'
     ];
 
     for (const dimension of dimensionesRequeridas) {

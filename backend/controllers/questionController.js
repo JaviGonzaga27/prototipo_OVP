@@ -11,10 +11,17 @@ export const getActiveQuestions = async (req, res) => {
       attributes: { exclude: ['createdAt', 'updatedAt'] }
     });
     
+    // Aleatorizar el orden de las preguntas usando Fisher-Yates shuffle
+    const shuffledQuestions = [...questions];
+    for (let i = shuffledQuestions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledQuestions[i], shuffledQuestions[j]] = [shuffledQuestions[j], shuffledQuestions[i]];
+    }
+    
     res.json({
       success: true,
-      count: questions.length,
-      questions
+      count: shuffledQuestions.length,
+      questions: shuffledQuestions
     });
   } catch (error) {
     res.status(500).json({ 

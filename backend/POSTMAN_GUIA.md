@@ -123,11 +123,10 @@ Los endpoints de **Login** y **Registro** incluyen scripts que:
 ## 📝 Notas Importantes
 
 ### Respuestas del Test
-El endpoint de predicción requiere **65 respuestas** (q1 a q65) con valores de 1 a 5:
+El endpoint de predicción requiere **62 respuestas** (q1 a q62) con valores de 1 a 5:
 
 - **q1-q30**: RIASEC (6 dimensiones × 5 preguntas)
 - **q31-q62**: Gardner (8 inteligencias × 4 preguntas)
-- **q63-q65**: Rendimiento académico
 
 ### Códigos de Respuesta
 

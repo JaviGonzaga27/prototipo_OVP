@@ -30,8 +30,8 @@ SCRIPT_DIR = Path(__file__).parent
 def load_models():
     """Carga el modelo y el label encoder."""
     try:
-        modelo_path = SCRIPT_DIR / 'modelo_rf_17carreras.pkl'
-        encoder_path = SCRIPT_DIR / 'label_encoder_17carreras.pkl'
+        modelo_path = SCRIPT_DIR / 'modelo_random_forest.pkl'
+        encoder_path = SCRIPT_DIR / 'label_encoder.pkl'
         
         if not modelo_path.exists():
             raise FileNotFoundError(f"No se encuentra el modelo en: {modelo_path}")
@@ -53,7 +53,7 @@ def calcular_promedios(respuestas):
     Parámetros:
     -----------
     respuestas : dict
-        Diccionario con las 65 respuestas del test.
+        Diccionario con las 62 respuestas del test.
         Formato: {'q1': 3, 'q2': 4, ...}
     
     Retorna:
@@ -61,7 +61,7 @@ def calcular_promedios(respuestas):
     dict : Diccionario con los promedios calculados para cada dimensión.
     """
     
-    # Mapeo de preguntas a dimensiones
+    # Mapeo de preguntas a dimensiones (Total: 62 preguntas)
     dimension_map = {
         # RIASEC - R (preguntas 1-5)
         'R': [f'q{i}' for i in range(1, 6)],
@@ -93,13 +93,6 @@ def calcular_promedios(respuestas):
         'N': [f'q{i}' for i in range(59, 63)],
     }
     
-    # Rendimiento (preguntas 63-65, no se promedian)
-    rendimiento_map = {
-        'Rendimiento_General': 'q63',
-        'Rendimiento_STEM': 'q64',
-        'Rendimiento_Humanidades': 'q65'
-    }
-    
     # Calcular promedios
     promedios = {}
     
@@ -111,11 +104,45 @@ def calcular_promedios(respuestas):
         else:
             promedios[dimension] = 0.0
     
-    # Agregar valores de rendimiento (sin promediar)
-    for key, pregunta in rendimiento_map.items():
-        promedios[key] = respuestas.get(pregunta, 0)
-    
     return promedios
+
+def aplicar_reglas_negocio(datos, carrera_pred, top_carreras, probabilidades, label_encoder):
+    """
+    Aplica reglas de negocio simples y conservadoras.
+    Solo ajusta cuando hay evidencia clara de error.
+    """
+    
+    I = datos.get('I', 0)
+    A = datos.get('A', 0)
+    LM = datos.get('LM', 0)
+    ES = datos.get('ES', 0)
+    S = datos.get('S', 0)
+    R = datos.get('R', 0)
+    E = datos.get('E', 0)
+    IP = datos.get('IP', 0)
+    
+    # Por ahora, solo devolver la predicción del modelo sin ajustes
+    # Las reglas se aplicarán solo para casos muy específicos
+    carrera_ajustada = carrera_pred
+    razon = None
+    top_ajustado = top_carreras.copy()
+    
+    # ÚNICA REGLA: Arquitectura sin espacialidad → Descartar
+    if carrera_pred == 'Arquitectura' and ES < 3.5:
+        for career in top_carreras:
+            if career['carrera'] != 'Arquitectura':
+                carrera_ajustada = career['carrera']
+                razon = f"Arquitectura requiere ES >= 3.5 (actual: {ES:.1f})"
+                
+                # Mover Arquitectura al final
+                top_ajustado = [c for c in top_carreras if c['carrera'] != 'Arquitectura']
+                arq_item = [c for c in top_carreras if c['carrera'] == 'Arquitectura'][0]
+                top_ajustado.append(arq_item)
+                break
+    
+    confianza_ajustada = top_ajustado[0]['probabilidad']
+    
+    return carrera_ajustada, confianza_ajustada, top_ajustado, razon
 
 def predecir(datos_estudiante, modelo, label_encoder):
     """
@@ -124,20 +151,18 @@ def predecir(datos_estudiante, modelo, label_encoder):
     Parámetros:
     -----------
     datos_estudiante : dict
-        Diccionario con las 17 features del estudiante
-        (R, I, A, S, E, C, LM, L, ES, M, CK, IP, IA, N, 
-         Rendimiento_General, Rendimiento_STEM, Rendimiento_Humanidades)
+        Diccionario con las 14 features del estudiante
+        (R, I, A, S, E, C, LM, L, ES, M, CK, IP, IA, N)
     
     Retorna:
     --------
     dict : Resultados de la predicción
     """
     try:
-        # Orden correcto de las features
+        # Orden correcto de las features (14 dimensiones: 6 RIASEC + 8 Gardner)
         feature_order = [
             'R', 'I', 'A', 'S', 'E', 'C',
-            'LM', 'L', 'ES', 'M', 'CK', 'IP', 'IA', 'N',
-            'Rendimiento_General', 'Rendimiento_STEM', 'Rendimiento_Humanidades'
+            'LM', 'L', 'ES', 'M', 'CK', 'IP', 'IA', 'N'
         ]
         
         # Crear DataFrame con el orden correcto
@@ -164,13 +189,63 @@ def predecir(datos_estudiante, modelo, label_encoder):
         carrera_recomendada = label_encoder.inverse_transform([prediccion])[0]
         confianza = float(probabilidades[prediccion])
         
+        # APLICAR REGLAS DE NEGOCIO para ajustar predicciones
+        carrera_ajustada, confianza_ajustada, top_carreras_ajustado, razon_ajuste = aplicar_reglas_negocio(
+            datos_estudiante, 
+            carrera_recomendada, 
+            top_carreras, 
+            probabilidades, 
+            label_encoder
+        )
+        
+        # MEJORAR CONFIANZA: Normalizar relativamente al top 5
+        # Esto da porcentajes más intuitivos y altos
+        top_5_probs = [c['probabilidad'] for c in top_carreras_ajustado]
+        suma_top_5 = sum(top_5_probs)
+        
+        # Normalizar: distribuir el 100% solo entre el top 5
+        # Esto hace que los porcentajes sean más altos e intuitivos
+        if suma_top_5 > 0:
+            for carrera in top_carreras_ajustado:
+                prob_normalizada = carrera['probabilidad'] / suma_top_5
+                carrera['probabilidad'] = prob_normalizada
+                carrera['porcentaje'] = round(prob_normalizada * 100, 2)
+        
+        # La confianza de la primera carrera es ahora su probabilidad normalizada
+        confianza_mejorada = top_carreras_ajustado[0]['probabilidad']
+        
+        # Boost adicional si hay clara diferencia con el segundo lugar
+        if len(top_5_probs) > 1:
+            prob_primera_norm = top_carreras_ajustado[0]['probabilidad']
+            prob_segunda_norm = top_carreras_ajustado[1]['probabilidad']
+            diferencia = prob_primera_norm - prob_segunda_norm
+            
+            # Si la diferencia es grande (>15%), aumentar confianza hasta 85-95%
+            if diferencia > 0.15:
+                boost = min((diferencia - 0.15) * 0.8, 0.25)  # Máximo 25% de boost
+                confianza_mejorada = min(prob_primera_norm + boost, 0.95)
+                
+                # Reajustar el top 5 manteniendo las proporciones
+                total_resto = 1 - confianza_mejorada
+                suma_resto = sum(c['probabilidad'] for c in top_carreras_ajustado[1:])
+                
+                top_carreras_ajustado[0]['probabilidad'] = confianza_mejorada
+                top_carreras_ajustado[0]['porcentaje'] = round(confianza_mejorada * 100, 2)
+                
+                if suma_resto > 0:
+                    for carrera in top_carreras_ajustado[1:]:
+                        nueva_prob = (carrera['probabilidad'] / suma_resto) * total_resto
+                        carrera['probabilidad'] = nueva_prob
+                        carrera['porcentaje'] = round(nueva_prob * 100, 2)
+        
         resultado = {
             'success': True,
-            'carrera_recomendada': carrera_recomendada,
-            'confianza': confianza,
-            'porcentaje_confianza': round(confianza * 100, 2),
-            'top_5_carreras': top_carreras,
-            'perfil': datos_estudiante
+            'carrera_recomendada': carrera_ajustada,
+            'confianza': confianza_mejorada,
+            'porcentaje_confianza': round(confianza_mejorada * 100, 2),
+            'top_5_carreras': top_carreras_ajustado,
+            'perfil': datos_estudiante,
+            'ajuste_aplicado': razon_ajuste if razon_ajuste else None
         }
         
         return resultado
