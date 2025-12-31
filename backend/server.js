@@ -38,6 +38,11 @@ app.get('/', (req, res) => {
   res.json({ message: 'API de Orientación Vocacional - Backend funcionando correctamente' });
 });
 
+// Health check endpoint para Docker
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Manejo de errores 404
 app.use((req, res) => {
   res.status(404).json({ 

@@ -1,0 +1,70 @@
+version: '3.8'
+
+# Configuración para desarrollo local con hot-reload
+
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: ovp-database-dev
+    environment:
+      POSTGRES_DB: ovp_database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    networks:
+      - ovp-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ovp-backend-dev
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: ovp_database
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: dev-secret-key
+      JWT_EXPIRES_IN: 24h
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - database
+    networks:
+      - ovp-network
+    command: npm start
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: ovp-frontend-dev
+    environment:
+      VITE_API_URL: http://localhost:3000
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - ovp-network
+    command: npm run dev
+
+networks:
+  ovp-network:
+    driver: bridge
+
+volumes:
+  postgres_data_dev:
