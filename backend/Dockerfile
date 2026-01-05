@@ -7,6 +7,7 @@ RUN apk add --no-cache \
     py3-pip \
     py3-numpy \
     py3-pandas \
+    py3-scikit-learn \
     && ln -sf python3 /usr/bin/python
 
 # Crear directorio de trabajo
@@ -21,8 +22,8 @@ RUN npm ci --only=production
 # Copiar requirements.txt del ML
 COPY ml/requirements.txt ./ml/
 
-# Instalar dependencias de Python
-RUN pip3 install --no-cache-dir -r ml/requirements.txt --break-system-packages
+# Instalar joblib (única dependencia faltante no disponible en Alpine)
+RUN pip3 install --no-cache-dir joblib --break-system-packages
 
 # Copiar código fuente
 COPY . .

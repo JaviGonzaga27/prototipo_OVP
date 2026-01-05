@@ -68,10 +68,10 @@ docker login
 
 ```powershell
 # Construir imagen del BACKEND
-docker build -t TU_USERNAME/ovp-backend:latest ./backend
+docker build -t jcgonzaga2/ovp-backend:latest ./backend
 
 # Construir imagen del FRONTEND
-docker build -t TU_USERNAME/ovp-frontend:latest .
+docker build -t jcgonzaga2/ovp-frontend:latest .
 ```
 
 **Ejemplo con username "kewo"**:
@@ -96,10 +96,10 @@ docker images
 
 ```powershell
 # Subir BACKEND
-docker push TU_USERNAME/ovp-backend:latest
+docker push jcgonzaga2/ovp-backend:latest
 
 # Subir FRONTEND
-docker push TU_USERNAME/ovp-frontend:latest
+docker push jcgonzaga2/ovp-frontend:latest
 ```
 
 **Ejemplo**:

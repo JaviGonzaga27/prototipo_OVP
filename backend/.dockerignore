@@ -21,3 +21,7 @@ POSTMAN_GUIA.md
 RESUMEN_PRUEBAS.md
 ml/__pycache__
 ml/*.pyc
+ml/test_*.py
+
+# IMPORTANTE: NO ignorar los modelos .pkl
+# ml/*.pkl está comentado para permitir la copia de modelos

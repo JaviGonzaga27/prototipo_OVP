@@ -12,8 +12,15 @@ dotenv.config();
 
 const app = express();
 
+// Configuración CORS con variables de entorno
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || '*',
+  credentials: process.env.CORS_CREDENTIALS === 'true',
+  optionsSuccessStatus: 200
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

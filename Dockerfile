@@ -6,11 +6,11 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copiar archivos de dependencias
-COPY package*.json ./
+# Copiar solo package.json (sin lockfile)
+COPY package.json ./
 
-# Instalar dependencias
-RUN npm ci
+# Instalar dependencias permitiendo que npm resuelva las correctas para Linux
+RUN npm install --force
 
 # Copiar código fuente
 COPY . .

@@ -42,6 +42,8 @@ services:
       JWT_SECRET: ${JWT_SECRET:-change-this-secret-in-production}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-24h}
       INIT_DB: ${INIT_DB:-true}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+      CORS_CREDENTIALS: ${CORS_CREDENTIALS:-true}
     ports:
       - "${BACKEND_PORT:-3000}:3000"
     volumes:
