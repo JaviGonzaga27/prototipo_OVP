@@ -179,7 +179,12 @@ services:
     container_name: ovp-frontend
     restart: unless-stopped
     environment:
-      VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
+      # IMPORTANTE: Cambia esta URL según tu entorno de producción
+      # Ejemplos:
+      # - Con dominio: https://api.tudominio.com/api
+      # - Con IP pública: http://45.67.89.123:3000/api
+      # - Docker local: http://localhost:3000/api
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:3000/api}
     ports:
       - "${FRONTEND_PORT:-80}:80"
     depends_on:
@@ -332,6 +337,81 @@ docker image prune -a
 4. **JWT_SECRET**: CAMBIA el secret en producción por uno seguro
 5. **DB_PASSWORD**: USA una contraseña fuerte en producción
 6. **Tiempo de subida**: Puede tardar varios minutos dependiendo de tu conexión
+
+---
+
+## 🌐 Configuración de URLs para Producción
+
+### Problema de URLs Hardcodeadas - ✅ RESUELTO
+
+El sistema ahora usa variables de entorno para todas las URLs. **No hay URLs hardcodeadas**.
+
+### Configurar para Diferentes Entornos
+
+#### 1. Servidor con Dominio
+
+Edita tu `.env.production`:
+```env
+# Backend API URL
+VITE_API_URL=https://api.tudominio.com/api
+
+# CORS en el backend
+CORS_ORIGIN=https://tudominio.com
+```
+
+#### 2. Servidor con IP Pública
+
+Edita tu `.env.production`:
+```env
+# Backend API URL
+VITE_API_URL=http://45.67.89.123:3000/api
+
+# CORS en el backend  
+CORS_ORIGIN=http://45.67.89.123
+```
+
+#### 3. Docker Local con Puerto Personalizado
+
+Edita tu `.env.production`:
+```env
+# Backend en puerto 8080
+VITE_API_URL=http://localhost:8080/api
+
+# Cambiar también el puerto en docker-compose
+BACKEND_PORT=8080
+```
+
+### Aplicar Cambios
+
+Después de editar las variables de entorno:
+
+```powershell
+# Reconstruir las imágenes con la nueva configuración
+docker build -t TU_USERNAME/ovp-backend:latest ./backend
+docker build -t TU_USERNAME/ovp-frontend:latest .
+
+# Subir las nuevas imágenes
+docker push TU_USERNAME/ovp-backend:latest
+docker push TU_USERNAME/ovp-frontend:latest
+
+# En el servidor de producción, actualizar
+docker-compose -f docker-compose.prod.yml pull
+docker-compose -f docker-compose.prod.yml down
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### Verificar Configuración
+
+```powershell
+# Ver las variables de entorno del contenedor frontend
+docker exec ovp-frontend env | grep VITE_API_URL
+
+# Ver logs para detectar errores de conexión
+docker-compose logs frontend
+docker-compose logs backend
+```
+
+**📖 Más información**: Ver [URL_CONFIGURATION.md](URL_CONFIGURATION.md) para guía completa de configuración de URLs.
 
 ---
 

@@ -37,7 +37,7 @@ const TestResultDetail = () => {
         setResult(resultData.result);
         
         // Cargar preguntas
-        const questionsResponse = await fetch('http://localhost:5000/api/questions', {
+        const questionsResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/questions`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

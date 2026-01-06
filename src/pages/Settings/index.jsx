@@ -48,7 +48,7 @@ const Settings = () => {
 
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/auth/change-password', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/auth/change-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ const Settings = () => {
 
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/auth/update-profile', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/auth/update-profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
