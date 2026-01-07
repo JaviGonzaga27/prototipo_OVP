@@ -94,25 +94,6 @@ const Login = () => {
             </p>
           </div>
 
-          {/* Credenciales de administrador */}
-          {!isRegisterMode && (
-            <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
-              <div className="flex flex-col">
-                <span className="font-semibold text-blue-800 mb-2">Credenciales de administrador:</span>
-                <div className="space-y-1">
-                  <div className="flex items-center text-blue-700">
-                    <EnvelopeIcon className="w-4 h-4 mr-2" />
-                    <span>admin@ovp.com</span>
-                  </div>
-                  <div className="flex items-center text-blue-700">
-                    <LockClosedIcon className="w-4 h-4 mr-2" />
-                    <span>admin123</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           <form className="space-y-6" onSubmit={handleSubmit}>
             {infoMessage && (
               <div className="bg-amber-50 text-amber-800 p-4 rounded-xl flex items-center border border-amber-200">
