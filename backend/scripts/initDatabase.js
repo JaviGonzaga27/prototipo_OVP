@@ -34,8 +34,8 @@ async function initDatabase() {
     console.log('   Email: admin@ovp.com');
     console.log('   Password: admin123');
 
-    console.log('\n💡 Para insertar las 65 preguntas del test vocacional, ejecuta:');
-    console.log('   node scripts/populateQuestions.js\n');
+    console.log('\n💡 Para insertar las 62 preguntas del test vocacional, ejecuta:');
+    console.log('   node scripts/update62Questions.js\n');
 
     console.log('🔄 Creando usuario de prueba...');
     
