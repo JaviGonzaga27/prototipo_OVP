@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import { sequelize, User, TestResult, Question } from '../models/index.js';
 import bcrypt from 'bcryptjs';
+import { insert62Questions } from './update62Questions.js';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -34,10 +35,10 @@ async function initDatabase() {
     console.log('   Email: admin@ovp.com');
     console.log('   Password: admin123');
 
-    console.log('\n💡 Para insertar las 62 preguntas del test vocacional, ejecuta:');
-    console.log('   node scripts/update62Questions.js\n');
+    // Insertar las 62 preguntas usando la función importada de update62Questions.js
+    await insert62Questions();
 
-    console.log('🔄 Creando usuario de prueba...');
+    console.log('\n🔄 Creando usuario de prueba...');
     
     // Crear un usuario estudiante de prueba
     const testUser = await User.create({
@@ -53,9 +54,9 @@ async function initDatabase() {
 
     console.log('\n🔄 Creando resultado de test de ejemplo...');
     
-    // Crear un resultado de test de ejemplo con respuestas simuladas
+    // Crear un resultado de test de ejemplo con respuestas simuladas (62 preguntas)
     const sampleAnswers = {};
-    for (let i = 1; i <= 65; i++) {
+    for (let i = 1; i <= 62; i++) {
       sampleAnswers[`q${i}`] = Math.floor(Math.random() * 5) + 1; // Respuesta aleatoria 1-5
     }
 
@@ -97,8 +98,15 @@ async function initDatabase() {
     console.log('\n✨ Base de datos inicializada correctamente!\n');
     console.log('📊 Resumen:');
     console.log(`   - Usuarios: ${await User.count()}`);
-    console.log(`   - Preguntas: ${await Question.count()}`);
+    console.log(`   - Preguntas: ${await Question.count()} (62 preguntas: 30 RIASEC + 32 Gardner)`);
     console.log(`   - Resultados: ${await TestResult.count()}`);
+    
+    // Verificar distribución de preguntas
+    const riasecCount = await Question.count({ where: { category: 'RIASEC' } });
+    const gardnerCount = await Question.count({ where: { category: 'Gardner' } });
+    console.log(`   - RIASEC: ${riasecCount} preguntas (6 dimensiones × 5 preguntas)`);
+    console.log(`   - Gardner: ${gardnerCount} preguntas (8 inteligencias × 4 preguntas)`);
+    
     console.log('\n🎯 Puedes iniciar sesión con:');
     console.log('   Admin: admin@ovp.com / admin123');
     console.log('   Estudiante: estudiante@test.com / test123\n');
