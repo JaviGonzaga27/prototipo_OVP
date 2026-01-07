@@ -1,0 +1,77 @@
+# Node
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment files (se pasarán como ARG en build)
+.env.local
+.env.*.local
+
+# Testing
+coverage
+.nyc_output
+
+# Logs
+logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Documentation
+README.md
+TESTING_README.md
+ARQUITECTURA.md
+URL_CONFIGURATION.md
+
+# Testing files
+cypress
+cypress.config.js
+tests
+*.test.js
+*.test.jsx
+*.spec.js
+*.spec.jsx
+jest.config.js
+vitest.config.js
+
+# Makefile
+Makefile
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+.env
+.env.local
+.env.*.local
