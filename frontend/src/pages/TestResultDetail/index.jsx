@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getTestResultById } from '../../services/auth';
+import { API_BASE_URL } from '../../config/api';
 import { 
   ArrowLeftIcon,
   AcademicCapIcon,
@@ -37,7 +38,7 @@ const TestResultDetail = () => {
         setResult(resultData.result);
         
         // Cargar preguntas
-        const questionsResponse = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/questions`, {
+        const questionsResponse = await fetch(`${API_BASE_URL}/questions`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
