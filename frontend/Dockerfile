@@ -15,7 +15,7 @@ COPY package*.json ./
 
 # Instalar todas las dependencias (necesarias para build) ignorando plataforma
 RUN npm install --legacy-peer-deps --force && \
-    npm cache clean --force
+  npm cache clean --force
 
 # Copiar código fuente
 COPY . .
@@ -29,8 +29,8 @@ RUN npm run build
 # ================================
 FROM nginx:alpine AS production
 
-# Instalar gettext para envsubst (sustituir variables de entorno)
-RUN apk add --no-cache gettext
+# Instalar gettext para envsubst y wget para healthcheck
+RUN apk add --no-cache gettext wget
 
 # Copiar archivos build desde la etapa anterior
 COPY --from=build /app/dist /usr/share/nginx/html

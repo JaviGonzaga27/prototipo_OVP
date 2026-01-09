@@ -1,9 +1,10 @@
 # ================================
 # Backend OVP - Dockerfile
 # Sistema de Orientación Vocacional
+# Con Python para ML
 # ================================
 
-# Etapa 1: Dependencias
+# Etapa 1: Dependencias Node.js
 FROM node:20-alpine AS deps
 
 WORKDIR /app
@@ -15,19 +16,29 @@ COPY package*.json ./
 RUN npm ci --only=production && npm cache clean --force
 
 # ================================
-# Etapa 2: Producción
+# Etapa 2: Producción con Python
+# ================================
 FROM node:20-alpine AS production
 
 WORKDIR /app
+
+# Instalar Python y dependencias para ML
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    py3-numpy \
+    py3-pandas \
+    py3-scikit-learn && \
+    ln -sf python3 /usr/bin/python
 
 # Crear usuario no-root para seguridad
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodeuser -u 1001
 
-# Copiar dependencias desde etapa anterior
+# Copiar dependencias Node.js desde etapa anterior
 COPY --from=deps /app/node_modules ./node_modules
 
-# Copiar código fuente
+# Copiar código fuente (incluyendo modelos ML)
 COPY --chown=nodeuser:nodejs . .
 
 # Cambiar a usuario no-root
@@ -39,6 +50,10 @@ USER nodeuser
 # Servidor (valores por defecto seguros)
 ENV PORT=5000
 ENV NODE_ENV=production
+
+# Python encoding
+ENV PYTHONIOENCODING=utf-8
+ENV PYTHONUNBUFFERED=1
 
 # Base de Datos PostgreSQL (host y puerto con defaults)
 ENV DB_HOST=database
