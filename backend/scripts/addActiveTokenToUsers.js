@@ -8,9 +8,11 @@ const addActiveTokenColumn = async () => {
   try {
     console.log('🔄 Iniciando migración: Agregando columna activeToken a Users...');
 
-    // Verificar si la columna ya existe
+    // Verificar si la columna ya existe (sintaxis PostgreSQL)
     const [columns] = await sequelize.query(
-      `SHOW COLUMNS FROM Users LIKE 'activeToken'`,
+      `SELECT column_name 
+       FROM information_schema.columns 
+       WHERE table_name = 'Users' AND column_name = 'activeToken'`,
       { type: QueryTypes.SELECT }
     );
 
@@ -19,11 +21,10 @@ const addActiveTokenColumn = async () => {
       return;
     }
 
-    // Agregar la columna activeToken
+    // Agregar la columna activeToken (sintaxis PostgreSQL)
     await sequelize.query(`
-      ALTER TABLE Users 
-      ADD COLUMN activeToken TEXT NULL 
-      COMMENT 'Token activo de la sesión actual - solo se permite una sesión activa'
+      ALTER TABLE "Users" 
+      ADD COLUMN "activeToken" TEXT NULL
     `);
 
     console.log('✅ Columna activeToken agregada exitosamente');
