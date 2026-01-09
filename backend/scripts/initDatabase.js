@@ -21,6 +21,23 @@ async function initDatabase() {
     await sequelize.sync({ force: true });
     console.log('✅ Tablas creadas correctamente.');
 
+    // Verificar que el campo activeToken existe en Users
+    console.log('🔄 Verificando campo activeToken en tabla Users...');
+    const [columns] = await sequelize.query(
+      `SELECT column_name FROM information_schema.columns 
+       WHERE table_name = 'Users' AND column_name = 'activeToken'`
+    );
+    if (columns.length > 0) {
+      console.log('✅ Campo activeToken verificado correctamente.');
+    } else {
+      console.log('⚠️  Campo activeToken no encontrado, creando...');
+      await sequelize.query(`
+        ALTER TABLE "Users" 
+        ADD COLUMN "activeToken" TEXT NULL
+      `);
+      console.log('✅ Campo activeToken creado.');
+    }
+
     console.log('\n🔄 Insertando usuario administrador...');
     
     // Crear usuario administrador

@@ -1,7 +1,8 @@
 // src/context/AuthContext.jsx
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { loginUser, registerUser, getCurrentUser } from '../services/auth';
+import { loginUser, registerUser, getCurrentUser, logoutUser } from '../services/auth';
+import { onSessionReplaced } from '../utils/apiInterceptor';
 
 // Creamos y exportamos el contexto
 export const AuthContext = createContext(null);
@@ -19,6 +20,26 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [sessionReplacedMessage, setSessionReplacedMessage] = useState(null);
+
+  const logout = useCallback(() => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+  }, []);
+
+  // Configurar callback para sesiones reemplazadas
+  useEffect(() => {
+    onSessionReplaced((message) => {
+      setSessionReplacedMessage(message);
+      logout();
+      // Redirigir al login después de un breve delay
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 100);
+    });
+  }, [logout]);
 
   useEffect(() => {
     const initAuth = async () => {
@@ -33,6 +54,7 @@ export const AuthProvider = ({ children }) => {
           setToken(storedToken);
         } catch (error) {
           // Si el token no es válido, limpiar storage
+          console.log('Token inválido o expirado:', error.message);
           localStorage.removeItem('user');
           localStorage.removeItem('token');
         }
@@ -51,6 +73,7 @@ export const AuthProvider = ({ children }) => {
       setToken(response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
       localStorage.setItem('token', response.token);
+      setSessionReplacedMessage(null); // Limpiar mensaje si existe
       
       return response;
     } catch (error) {
@@ -73,15 +96,28 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+  const handleLogout = async () => {
+    try {
+      if (token) {
+        await logoutUser(token);
+      }
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    } finally {
+      logout();
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      token, 
+      login, 
+      register, 
+      logout: handleLogout, 
+      loading,
+      sessionReplacedMessage 
+    }}>
       {children}
     </AuthContext.Provider>
   );

@@ -48,6 +48,7 @@ El servidor estará disponible en `http://localhost:5000`
 ### Autenticación (`/api/auth`)
 - `POST /register` - Registrar nuevo usuario
 - `POST /login` - Iniciar sesión
+- `POST /logout` - Cerrar sesión (requiere token)
 - `GET /me` - Obtener usuario actual (requiere token)
 
 ### Test (`/api/test`)
@@ -88,6 +89,23 @@ backend/
 - Autenticación mediante JWT
 - Tokens válidos por 30 días
 - Middleware de protección de rutas
+- **Sistema de sesión única**: Solo se permite una sesión activa por usuario. Si un usuario inicia sesión desde otro dispositivo, la sesión anterior se invalida automáticamente.
+
+## Migración de Base de Datos
+
+### Para nuevas instalaciones (Docker)
+El campo `activeToken` se crea automáticamente al ejecutar:
+```bash
+npm run init-db
+```
+
+### Para bases de datos existentes
+Si ya tienes una base de datos en producción, ejecuta:
+```bash
+npm run migrate:activetoken
+```
+
+Ver [SINGLE_SESSION_IMPLEMENTATION.md](../SINGLE_SESSION_IMPLEMENTATION.md) para más detalles.
 
 ## Base de Datos
 
