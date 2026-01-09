@@ -40,9 +40,13 @@ export const register = async (req, res) => {
       role: 'student' // Por defecto todos son estudiantes
     });
 
+    // Generar token y guardarlo
+    const token = generateToken(user.id);
+    await user.update({ activeToken: token });
+
     res.status(201).json({
       success: true,
-      token: generateToken(user.id),
+      token: token,
       user: {
         id: user.id,
         name: user.name,
@@ -94,9 +98,13 @@ export const login = async (req, res) => {
       });
     }
 
+    // Generar nuevo token e invalidar sesiones anteriores
+    const token = generateToken(user.id);
+    await user.update({ activeToken: token });
+
     res.json({
       success: true,
-      token: generateToken(user.id),
+      token: token,
       user: {
         id: user.id,
         name: user.name,
@@ -133,6 +141,29 @@ export const getMe = async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Error al obtener usuario',
+      error: error.message 
+    });
+  }
+};
+
+// @desc    Cerrar sesión
+// @route   POST /api/auth/logout
+// @access  Private
+export const logout = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+    
+    // Invalidar el token activo
+    await user.update({ activeToken: null });
+    
+    res.json({
+      success: true,
+      message: 'Sesión cerrada exitosamente'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error al cerrar sesión',
       error: error.message 
     });
   }

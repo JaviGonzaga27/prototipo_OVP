@@ -1,5 +1,6 @@
 // src/services/auth.js
 import API_BASE_URL from '../config/api';
+import { fetchWithSessionCheck } from '../utils/apiInterceptor';
 
 const API_URL = API_BASE_URL;
 
@@ -49,7 +50,7 @@ export const registerUser = async (name, email, password) => {
 
 export const getCurrentUser = async (token) => {
   try {
-    const response = await fetch(`${API_URL}/auth/me`, {
+    const response = await fetchWithSessionCheck(`${API_URL}/auth/me`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +61,35 @@ export const getCurrentUser = async (token) => {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || 'Error al obtener usuario');
+      // Propagar el código de error si existe
+      const error = new Error(data.message || 'Error al obtener usuario');
+      error.code = data.code;
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    // Preservar el código de error
+    const err = new Error(error.message);
+    err.code = error.code;
+    throw err;
+  }
+};
+
+export const logoutUser = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/auth/logout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Error al cerrar sesión');
     }
 
     return data;

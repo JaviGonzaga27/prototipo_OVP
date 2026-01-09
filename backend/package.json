@@ -9,6 +9,7 @@
     "dev": "node --watch server.js",
     "create-db": "node scripts/createDB.js",
     "init-db": "node scripts/initDatabase.js",
+    "migrate:activetoken": "node scripts/addActiveTokenToUsers.js",
     "test": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "test:coverage": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage",

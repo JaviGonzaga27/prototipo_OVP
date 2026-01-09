@@ -22,9 +22,9 @@ const Login = () => {
   const [infoMessage, setInfoMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, register } = useAuth();
+  const { login, register, sessionReplacedMessage } = useAuth();
 
-  // Mostrar mensaje de timeout si viene del state
+  // Mostrar mensaje de timeout o sesión reemplazada si viene del state
   useEffect(() => {
     if (location.state?.message) {
       setInfoMessage(location.state.message);
@@ -33,8 +33,15 @@ const Login = () => {
         setInfoMessage('');
       }, 5000);
       return () => clearTimeout(timer);
+    } else if (sessionReplacedMessage) {
+      setInfoMessage(sessionReplacedMessage);
+      // Limpiar el mensaje después de 8 segundos
+      const timer = setTimeout(() => {
+        setInfoMessage('');
+      }, 8000);
+      return () => clearTimeout(timer);
     }
-  }, [location.state]);
+  }, [location.state, sessionReplacedMessage]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -59,6 +59,10 @@ const Results = () => {
       {/* Estilos de impresión */}
       <style>{`
         @media print {
+          @page {
+            size: A4;
+            margin: 0.5cm;
+          }
           body * {
             visibility: hidden;
           }
@@ -70,13 +74,11 @@ const Results = () => {
             left: 0;
             top: 0;
             width: 100%;
-            padding: 40px;
+            padding: 0.5cm;
+            font-size: 9pt;
           }
           .no-print {
             display: none !important;
-          }
-          .print-break {
-            page-break-after: always;
           }
         }
       `}</style>
@@ -107,144 +109,273 @@ const Results = () => {
 
         {/* Certificado para impresión */}
         <div id="printable-certificate" className="hidden print:block">
-          <div className="max-w-4xl mx-auto p-12 bg-white">
-            {/* Encabezado del certificado */}
-            <div className="border-8 border-double border-indigo-600 p-12 rounded-lg">
-              <div className="text-center mb-8">
-                <div className="flex justify-center mb-4">
-                  <AcademicCapIcon className="w-24 h-24 text-indigo-600" />
+          <div className="bg-white" style={{fontSize: '9pt', lineHeight: '1.2'}}>
+            <div className="border-4 border-double border-indigo-600 p-4 rounded-lg">
+              {/* Encabezado compacto */}
+              <div className="text-center mb-3">
+                <div className="flex justify-center mb-2">
+                  <AcademicCapIcon className="w-12 h-12 text-indigo-600" />
                 </div>
-                <h1 className="text-5xl font-serif font-bold text-gray-900 mb-2">
-                  CERTIFICADO
-                </h1>
-                <p className="text-xl text-gray-600">
-                  de Orientación Vocacional
-                </p>
-                <div className="w-32 h-1 bg-indigo-600 mx-auto mt-4"></div>
+                <h1 className="text-2xl font-serif font-bold text-gray-900 mb-1">CERTIFICADO</h1>
+                <p className="text-sm text-gray-600">de Orientación Vocacional</p>
+                <div className="w-20 h-0.5 bg-indigo-600 mx-auto mt-2"></div>
               </div>
 
               {/* Información del estudiante */}
-              <div className="text-center mb-8">
-                <p className="text-lg text-gray-600 mb-2">Se certifica que</p>
-                <p className="text-3xl font-bold text-gray-900 mb-4">
-                  {user?.name || 'Estudiante'}
-                </p>
-                <p className="text-gray-600">
-                  Ha completado exitosamente el Test de Orientación Vocacional
-                </p>
-                <p className="text-sm text-gray-500 mt-2">
-                  el {new Date().toLocaleDateString('es-ES', { 
-                    day: 'numeric', 
-                    month: 'long', 
-                    year: 'numeric' 
-                  })}
+              <div className="text-center mb-3">
+                <p className="text-xs text-gray-600 mb-1">Se certifica que</p>
+                <p className="text-lg font-bold text-gray-900 mb-2">{user?.name || 'Estudiante'}</p>
+                <p className="text-xs text-gray-600">Ha completado exitosamente el Test de Orientación Vocacional</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  el {new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               </div>
 
-              {/* Resultado principal */}
-              <div className="bg-indigo-50 border-2 border-indigo-200 rounded-lg p-6 mb-8">
+              {/* Carrera recomendada */}
+              <div className="bg-indigo-50 border-2 border-indigo-200 rounded p-3 mb-3">
                 <div className="text-center">
-                  <p className="text-sm font-semibold text-indigo-600 uppercase tracking-wide mb-2">
-                    Carrera Recomendada
-                  </p>
-                  <p className="text-3xl font-bold text-gray-900 mb-3">
-                    {prediction.carrera_recomendada}
-                  </p>
-                  <div className="flex items-center justify-center space-x-4">
+                  <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-1">Carrera Recomendada</p>
+                  <p className="text-base font-bold text-gray-900 mb-2">{prediction.carrera_recomendada}</p>
+                  <div className="flex items-center justify-center space-x-3">
                     <div>
-                      <p className="text-sm text-gray-600">Compatibilidad</p>
-                      <p className="text-2xl font-bold text-indigo-600">
-                        {prediction.confianza}%
-                      </p>
+                      <p className="text-xs text-gray-600">Compatibilidad</p>
+                      <p className="text-sm font-bold text-indigo-600">{prediction.confianza}%</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Top 5 carreras */}
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
-                  Top 5 Carreras Compatibles
-                </h3>
-                <div className="grid grid-cols-1 gap-3">
+              {/* Top 5 Carreras */}
+              <div className="mb-3">
+                <h3 className="text-sm font-bold text-gray-900 mb-2 text-center">Top 5 Carreras Compatibles</h3>
+                <div className="space-y-1.5">
                   {prediction.top_5_carreras.map((career, index) => (
-                    <div key={index} className="flex items-center justify-between border-b border-gray-200 pb-2">
-                      <div className="flex items-center">
-                        <span className="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm mr-3">
-                          {index + 1}
-                        </span>
-                        <span className="font-medium text-gray-900">{career.carrera}</span>
+                    <div key={index} className="flex items-center justify-between text-xs border-b border-gray-200 pb-1">
+                      <div className="flex items-center flex-1 min-w-0 mr-2">
+                        <span className="w-5 h-5 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-xs mr-2 flex-shrink-0">{index + 1}</span>
+                        <span className="font-medium text-gray-900 truncate">{career.carrera}</span>
                       </div>
-                      <span className="font-bold text-indigo-600">{career.porcentaje}%</span>
+                      <span className="font-bold text-indigo-600 flex-shrink-0">{career.porcentaje}%</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Perfil Vocacional RIASEC */}
-              <div className="mb-8">
-                <h3 className="text-lg font-bold text-gray-900 mb-3 text-center">
-                  Perfil Vocacional (RIASEC)
-                </h3>
-                <div className="grid grid-cols-6 gap-2">
-                  {['R', 'I', 'A', 'S', 'E', 'C'].map(dim => (
-                    <div key={dim} className="text-center border border-gray-200 rounded p-2">
-                      <p className="text-sm font-bold text-gray-700">{dim}</p>
-                      <p className="text-lg font-bold text-indigo-600">
-                        {prediction.perfil[dim].toFixed(1)}
-                      </p>
+              {/* Perfiles con gráficos de pastel */}
+              {prediction.perfil && Object.keys(prediction.perfil).length > 0 && (
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  {/* RIASEC */}
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 mb-1 text-center">Perfil RIASEC</h3>
+                    <p className="text-xs text-gray-600 mb-2 text-center" style={{fontSize: '7pt'}}>
+                      Modelo de Holland que clasifica intereses vocacionales en seis tipos de personalidad laboral.
+                    </p>
+                    <div className="flex items-center gap-2">
+                      {/* Gráfico */}
+                      <div className="flex-shrink-0">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                          {(() => {
+                            const dimensions = [
+                              { code: 'R', name: 'Realista', color: '#3b82f6' },
+                              { code: 'I', name: 'Investigador', color: '#8b5cf6' },
+                              { code: 'A', name: 'Artístico', color: '#ec4899' },
+                              { code: 'S', name: 'Social', color: '#10b981' },
+                              { code: 'E', name: 'Emprendedor', color: '#f59e0b' },
+                              { code: 'C', name: 'Convencional', color: '#6366f1' }
+                            ];
+                            const total = dimensions.reduce((sum, dim) => sum + (prediction.perfil[dim.code] || 0), 0);
+                            let currentAngle = -90;
+                            
+                            return dimensions.map((dim, index) => {
+                              const value = prediction.perfil[dim.code] || 0;
+                              const percentage = total > 0 ? (value / total) * 100 : 0;
+                              const angle = (percentage / 100) * 360;
+                              const startAngle = currentAngle;
+                              const endAngle = currentAngle + angle;
+                              currentAngle = endAngle;
+                              
+                              const startRad = (startAngle * Math.PI) / 180;
+                              const endRad = (endAngle * Math.PI) / 180;
+                              const x1 = 60 + 55 * Math.cos(startRad);
+                              const y1 = 60 + 55 * Math.sin(startRad);
+                              const x2 = 60 + 55 * Math.cos(endRad);
+                              const y2 = 60 + 55 * Math.sin(endRad);
+                              const largeArc = angle > 180 ? 1 : 0;
+                              
+                              return (
+                                <path
+                                  key={dim.code}
+                                  d={`M 60 60 L ${x1} ${y1} A 55 55 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                                  fill={dim.color}
+                                  stroke="white"
+                                  strokeWidth="1"
+                                />
+                              );
+                            });
+                          })()}
+                        </svg>
+                      </div>
+                      {/* Leyenda */}
+                      <div className="flex-1 space-y-1" style={{fontSize: '7pt'}}>
+                        {[
+                          { code: 'R', name: 'Realista', color: '#3b82f6' },
+                          { code: 'I', name: 'Investigador', color: '#8b5cf6' },
+                          { code: 'A', name: 'Artístico', color: '#ec4899' },
+                          { code: 'S', name: 'Social', color: '#10b981' },
+                          { code: 'E', name: 'Emprendedor', color: '#f59e0b' },
+                          { code: 'C', name: 'Convencional', color: '#6366f1' }
+                        ].map(dim => (
+                          <div key={dim.code} className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="w-2.5 h-2.5 rounded-full mr-1.5 flex-shrink-0" style={{backgroundColor: dim.color}}></div>
+                              <span className="text-gray-700">{dim.name}</span>
+                            </div>
+                            <span className="font-bold text-gray-900 ml-1">{prediction.perfil[dim.code]?.toFixed(1) || 'N/A'}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Gardner */}
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 mb-1 text-center">Inteligencias Múltiples</h3>
+                    <p className="text-xs text-gray-600 mb-2 text-center" style={{fontSize: '7pt'}}>
+                      Teoría de Gardner que identifica ocho tipos diferentes de inteligencias en el ser humano.
+                    </p>
+                    <div className="flex items-center gap-2">
+                      {/* Gráfico */}
+                      <div className="flex-shrink-0">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                          {(() => {
+                            const dimensions = [
+                              { code: 'LM', name: 'Lógico-Matemática', color: '#ef4444' },
+                              { code: 'L', name: 'Lingüística', color: '#f97316' },
+                              { code: 'ES', name: 'Espacial', color: '#eab308' },
+                              { code: 'M', name: 'Musical', color: '#84cc16' },
+                              { code: 'CK', name: 'Corporal-Cinética', color: '#22c55e' },
+                              { code: 'IP', name: 'Interpersonal', color: '#14b8a6' },
+                              { code: 'IA', name: 'Intrapersonal', color: '#06b6d4' },
+                              { code: 'N', name: 'Naturalista', color: '#8b5cf6' }
+                            ];
+                            const total = dimensions.reduce((sum, dim) => sum + (prediction.perfil[dim.code] || 0), 0);
+                            let currentAngle = -90;
+                            
+                            return dimensions.map((dim, index) => {
+                              const value = prediction.perfil[dim.code] || 0;
+                              const percentage = total > 0 ? (value / total) * 100 : 0;
+                              const angle = (percentage / 100) * 360;
+                              const startAngle = currentAngle;
+                              const endAngle = currentAngle + angle;
+                              currentAngle = endAngle;
+                              
+                              const startRad = (startAngle * Math.PI) / 180;
+                              const endRad = (endAngle * Math.PI) / 180;
+                              const x1 = 60 + 55 * Math.cos(startRad);
+                              const y1 = 60 + 55 * Math.sin(startRad);
+                              const x2 = 60 + 55 * Math.cos(endRad);
+                              const y2 = 60 + 55 * Math.sin(endRad);
+                              const largeArc = angle > 180 ? 1 : 0;
+                              
+                              return (
+                                <path
+                                  key={dim.code}
+                                  d={`M 60 60 L ${x1} ${y1} A 55 55 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                                  fill={dim.color}
+                                  stroke="white"
+                                  strokeWidth="1"
+                                />
+                              );
+                            });
+                          })()}
+                        </svg>
+                      </div>
+                      {/* Leyenda */}
+                      <div className="flex-1 space-y-0.5" style={{fontSize: '6.5pt'}}>
+                        {[
+                          { code: 'LM', name: 'Lógico-Matemática', color: '#ef4444' },
+                          { code: 'L', name: 'Lingüística', color: '#f97316' },
+                          { code: 'ES', name: 'Espacial', color: '#eab308' },
+                          { code: 'M', name: 'Musical', color: '#84cc16' },
+                          { code: 'CK', name: 'Corporal-Cinética', color: '#22c55e' },
+                          { code: 'IP', name: 'Interpersonal', color: '#14b8a6' },
+                          { code: 'IA', name: 'Intrapersonal', color: '#06b6d4' },
+                          { code: 'N', name: 'Naturalista', color: '#8b5cf6' }
+                        ].map(dim => (
+                          <div key={dim.code} className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="w-2 h-2 rounded-full mr-1 flex-shrink-0" style={{backgroundColor: dim.color}}></div>
+                              <span className="text-gray-700">{dim.name}</span>
+                            </div>
+                            <span className="font-bold text-gray-900 ml-1">{prediction.perfil[dim.code]?.toFixed(1) || 'N/A'}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Recomendaciones compactas */}
+              <div className="mb-3">
+                <h3 className="text-sm font-bold text-gray-900 mb-2 text-center">Recomendaciones</h3>
+                <div className="grid grid-cols-3 gap-2" style={{fontSize: '7pt'}}>
+                  <div className="p-2 bg-blue-50 rounded">
+                    <p className="font-bold text-xs mb-1">Próximos Pasos</p>
+                    <ul className="space-y-0.5 text-gray-600">
+                      <li>• Investigar programas universitarios</li>
+                      <li>• Buscar experiencias prácticas</li>
+                      <li>• Contactar profesionales</li>
+                    </ul>
+                  </div>
+                  <div className="p-2 bg-green-50 rounded">
+                    <p className="font-bold text-xs mb-1">Recursos</p>
+                    <ul className="space-y-0.5 text-gray-600">
+                      <li>• Portales universitarios</li>
+                      <li>• Ferias vocacionales</li>
+                      <li>• Cursos online</li>
+                    </ul>
+                  </div>
+                  <div className="p-2 bg-purple-50 rounded">
+                    <p className="font-bold text-xs mb-1">Consejos</p>
+                    <ul className="space-y-0.5 text-gray-600">
+                      <li>• Seguir tus intereses</li>
+                      <li>• Evaluar habilidades</li>
+                      <li>• Mente abierta</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
 
-              {/* Inteligencias Múltiples */}
-              <div className="mb-8">
-                <h3 className="text-lg font-bold text-gray-900 mb-3 text-center">
-                  Inteligencias Múltiples (Gardner)
-                </h3>
-                <div className="grid grid-cols-4 gap-2">
-                  {['LM', 'L', 'ES', 'M', 'CK', 'IP', 'IA', 'N'].map(dim => (
-                    <div key={dim} className="text-center border border-gray-200 rounded p-2">
-                      <p className="text-xs font-bold text-gray-700">{dim}</p>
-                      <p className="text-sm font-bold text-green-600">
-                        {prediction.perfil[dim].toFixed(1)}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Firma y sello */}
-              <div className="mt-12 pt-8 border-t-2 border-gray-300">
-                <div className="flex justify-between items-end">
-                  <div className="text-center flex-1">
-                    <div className="border-t-2 border-gray-400 pt-2 mt-8 mx-12">
+              {/* Pie de certificado */}
+              <div className="mt-3 pt-2 border-t-2 border-gray-300">
+                <div className="flex justify-between items-center" style={{fontSize: '8pt'}}>
+                  <div className="text-center">
+                    <div className="border-t border-gray-400 pt-1 px-4">
                       <p className="font-semibold text-gray-900">Sistema OVP</p>
-                      <p className="text-sm text-gray-600">Orientación Vocacional</p>
+                      <p className="text-xs text-gray-600">Orientación Vocacional</p>
                     </div>
                   </div>
-                  <div className="flex-1 flex justify-center">
-                    <div className="w-24 h-24 border-4 border-indigo-600 rounded-full flex items-center justify-center">
-                      <div className="text-center">
-                        <p className="text-xs font-bold text-indigo-600">SELLO</p>
-                        <p className="text-xs text-indigo-600">OFICIAL</p>
+                  <div className="flex justify-center">
+                    <div className="w-12 h-12 border-2 border-indigo-600 rounded-full flex items-center justify-center">
+                      <div className="text-center" style={{fontSize: '6pt'}}>
+                        <p className="font-bold text-indigo-600">SELLO</p>
+                        <p className="text-indigo-600">OFICIAL</p>
                       </div>
                     </div>
                   </div>
-                  <div className="text-center flex-1">
-                    <div className="border-t-2 border-gray-400 pt-2 mt-8 mx-12">
+                  <div className="text-center">
+                    <div className="border-t border-gray-400 pt-1 px-4">
                       <p className="font-semibold text-gray-900">ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}</p>
-                      <p className="text-sm text-gray-600">Código de Verificación</p>
+                      <p className="text-xs text-gray-600">Código Verificación</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Footer */}
-              <div className="text-center mt-6 text-xs text-gray-500">
-                <p>Este certificado es generado automáticamente por el Sistema de Orientación Vocacional</p>
-                <p>basado en el análisis de {Object.keys(prediction.perfil).length} dimensiones vocacionales con IA</p>
+              <div className="text-center mt-2" style={{fontSize: '6pt', lineHeight: '1.1'}}>
+                <p className="text-gray-500">Este certificado es generado automáticamente por el Sistema de Orientación Vocacional</p>
+                <p className="text-gray-500">basado en el análisis de múltiples dimensiones vocacionales con IA</p>
               </div>
             </div>
           </div>
