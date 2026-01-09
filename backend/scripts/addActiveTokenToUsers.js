@@ -27,11 +27,11 @@ const addActiveTokenColumn = async () => {
       ADD COLUMN "activeToken" TEXT NULL
     `);
 
-    console.log('✅ Columna activeToken agregada exitosamente');
-    console.log('🔒 Ahora el sistema solo permitirá una sesión activa por usuario');
+    console.log('Columna activeToken agregada exitosamente');
+    console.log('Ahora el sistema solo permitirá una sesión activa por usuario');
 
   } catch (error) {
-    console.error('❌ Error en la migración:', error.message);
+    console.error('Error en la migración:', error.message);
     throw error;
   } finally {
     await sequelize.close();
