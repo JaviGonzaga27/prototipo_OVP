@@ -29,6 +29,15 @@ export const protect = async (req, res, next) => {
         });
       }
 
+      // Verificar que el token sea el activo (sesión única)
+      if (user.activeToken !== token) {
+        return res.status(401).json({ 
+          success: false, 
+          message: 'Sesión inválida - Se ha iniciado sesión en otro dispositivo',
+          code: 'SESSION_REPLACED'
+        });
+      }
+
       // Convertir instancia Sequelize a objeto plano
       req.user = user.get({ plain: true });
 

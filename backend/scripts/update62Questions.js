@@ -1,98 +1,127 @@
 import { Question } from '../models/index.js';
 import sequelize from '../config/database.js';
+import { fileURLToPath } from 'url';
 
-// Lista simplificada de 62 preguntas (solo texto, categoría y dimensión)
-const questionTexts = [
-  // RIASEC - Realista (R) - 5 preguntas
-  { text: '¿Te ves trabajando en obras de construcción, usando cascos y herramientas eléctricas?', category: 'RIASEC', dimension: 'R' },
-  { text: '¿Te atrae la idea de armar y mantener máquinas o sistemas mecánicos (autos, aires acondicionados, etc.)?', category: 'RIASEC', dimension: 'R' },
-  { text: '¿Te imaginas trabajando al aire libre, como en granjas, bosques o minas?', category: 'RIASEC', dimension: 'R' },
-  { text: '¿Disfrutas haciendo manualidades o trabajos con madera, metal o textiles?', category: 'RIASEC', dimension: 'R' },
-  { text: '¿Preferirías un trabajo donde uses tu cuerpo y tus manos más que una oficina?', category: 'RIASEC', dimension: 'R' },
-  
-  // RIASEC - Investigativo (I) - 5 preguntas
-  { text: '¿Te gusta investigar sobre cómo funcionan las cosas o resolver problemas científicos?', category: 'RIASEC', dimension: 'I' },
-  { text: '¿Te atrae la idea de trabajar en un laboratorio haciendo experimentos?', category: 'RIASEC', dimension: 'I' },
-  { text: '¿Te interesa analizar datos, estadísticas o resultados de investigaciones?', category: 'RIASEC', dimension: 'I' },
-  { text: '¿Disfrutas resolviendo problemas complejos que requieren pensamiento lógico?', category: 'RIASEC', dimension: 'I' },
-  { text: '¿Te atrae la idea de desarrollar nuevas teorías o descubrir información desconocida?', category: 'RIASEC', dimension: 'I' },
-  
-  // RIASEC - Artístico (A) - 5 preguntas
-  { text: '¿Te imaginas diseñando espacios, edificios o interiores (arquitectura, diseño de interiores)?', category: 'RIASEC', dimension: 'A' },
-  { text: '¿Te gusta crear contenido visual como ilustraciones, videos o diseño gráfico?', category: 'RIASEC', dimension: 'A' },
-  { text: '¿Te atrae la idea de trabajar en teatro, cine, música o artes escénicas?', category: 'RIASEC', dimension: 'A' },
-  { text: '¿Disfrutas escribiendo historias, poemas o artículos creativos?', category: 'RIASEC', dimension: 'A' },
-  { text: '¿Preferirías trabajar en un ambiente donde puedas expresarte de forma creativa sin muchas reglas?', category: 'RIASEC', dimension: 'A' },
-  
-  // RIASEC - Social (S) - 5 preguntas
-  { text: '¿Te ves trabajando como maestro, educando a niños o jóvenes?', category: 'RIASEC', dimension: 'S' },
-  { text: '¿Te atrae ayudar a personas con problemas emocionales o de salud (psicología, enfermería)?', category: 'RIASEC', dimension: 'S' },
-  { text: '¿Te gusta trabajar en proyectos comunitarios o ayudar a grupos vulnerables?', category: 'RIASEC', dimension: 'S' },
-  { text: '¿Disfrutas aconsejando o guiando a otras personas para resolver sus problemas?', category: 'RIASEC', dimension: 'S' },
-  { text: '¿Preferirías un trabajo donde tu principal tarea sea ayudar o servir a otros?', category: 'RIASEC', dimension: 'S' },
-  
-  // RIASEC - Emprendedor (E) - 5 preguntas
-  { text: '¿Te imaginas liderando un equipo de trabajo o dirigiendo un proyecto importante?', category: 'RIASEC', dimension: 'E' },
-  { text: '¿Te atrae la idea de crear tu propio negocio o ser emprendedor?', category: 'RIASEC', dimension: 'E' },
-  { text: '¿Te gusta persuadir a otros o hacer presentaciones para vender ideas o productos?', category: 'RIASEC', dimension: 'E' },
-  { text: '¿Disfrutas tomar decisiones importantes que afectan el rumbo de un proyecto u organización?', category: 'RIASEC', dimension: 'E' },
-  { text: '¿Preferirías un ambiente competitivo donde puedas destacar y alcanzar metas ambiciosas?', category: 'RIASEC', dimension: 'E' },
-  
-  // RIASEC - Convencional (C) - 5 preguntas
-  { text: '¿Te ves trabajando con números, registros financieros o contabilidad?', category: 'RIASEC', dimension: 'C' },
-  { text: '¿Te atrae organizar archivos, documentos o bases de datos de forma ordenada?', category: 'RIASEC', dimension: 'C' },
-  { text: '¿Te gusta seguir procedimientos establecidos y trabajar con reglas claras?', category: 'RIASEC', dimension: 'C' },
-  { text: '¿Disfrutas hacer tareas detalladas que requieren precisión y atención?', category: 'RIASEC', dimension: 'C' },
-  { text: '¿Preferirías un trabajo estable con tareas predecibles y bien estructuradas?', category: 'RIASEC', dimension: 'C' },
-  
-  // Gardner - Lógico-Matemática (LM) - 4 preguntas
-  { text: '¿Te gusta resolver problemas matemáticos complejos o trabajar con cálculos?', category: 'Gardner', dimension: 'LM' },
-  { text: '¿Te atrae entender fórmulas, algoritmos o sistemas lógicos?', category: 'Gardner', dimension: 'LM' },
-  { text: '¿Disfrutas encontrar patrones o relaciones en datos numéricos?', category: 'Gardner', dimension: 'LM' },
-  { text: '¿Te consideras bueno/a en matemáticas y ciencias exactas?', category: 'Gardner', dimension: 'LM' },
-  
-  // Gardner - Lingüística (L) - 4 preguntas
-  { text: '¿Te gusta leer libros, artículos o ensayos extensos?', category: 'Gardner', dimension: 'L' },
-  { text: '¿Te atrae escribir textos, historias o comunicar ideas con palabras?', category: 'Gardner', dimension: 'L' },
-  { text: '¿Disfrutas aprender nuevos idiomas o estudiar gramática y vocabulario?', category: 'Gardner', dimension: 'L' },
-  { text: '¿Te consideras bueno/a para expresarte verbalmente y persuadir con palabras?', category: 'Gardner', dimension: 'L' },
-  
-  // Gardner - Espacial (ES) - 4 preguntas
-  { text: '¿Te gusta visualizar cómo se vería un objeto en 3D o desde diferentes ángulos?', category: 'Gardner', dimension: 'ES' },
-  { text: '¿Te atrae diseñar planos, mapas o diagramas técnicos?', category: 'Gardner', dimension: 'ES' },
-  { text: '¿Disfrutas trabajando con diseño gráfico, modelado 3D o arquitectura?', category: 'Gardner', dimension: 'ES' },
-  { text: '¿Te consideras bueno/a para imaginar espacios y formas en tu mente?', category: 'Gardner', dimension: 'ES' },
-  
-  // Gardner - Musical (M) - 4 preguntas
-  { text: '¿Te gusta tocar instrumentos musicales o crear música?', category: 'Gardner', dimension: 'M' },
-  { text: '¿Te atrae componer canciones, melodías o producir audio?', category: 'Gardner', dimension: 'M' },
-  { text: '¿Disfrutas cantar o expresarte a través de la música?', category: 'Gardner', dimension: 'M' },
-  { text: '¿Te consideras sensible a ritmos, tonos y armonías musicales?', category: 'Gardner', dimension: 'M' },
-  
-  // Gardner - Corporal-Kinestésica (CK) - 4 preguntas
-  { text: '¿Te gusta practicar deportes o actividades físicas de forma regular?', category: 'Gardner', dimension: 'CK' },
-  { text: '¿Te atrae bailar, actuar o expresarte con movimientos corporales?', category: 'Gardner', dimension: 'CK' },
-  { text: '¿Disfrutas trabajando con tus manos en tareas que requieren coordinación?', category: 'Gardner', dimension: 'CK' },
-  { text: '¿Te consideras ágil y coordinado/a en actividades físicas?', category: 'Gardner', dimension: 'CK' },
-  
-  // Gardner - Interpersonal (IP) - 4 preguntas
-  { text: '¿Te gusta trabajar en equipo y colaborar con otras personas?', category: 'Gardner', dimension: 'IP' },
-  { text: '¿Te atrae entender las emociones y necesidades de los demás?', category: 'Gardner', dimension: 'IP' },
-  { text: '¿Disfrutas mediar en conflictos o ayudar a que las personas se entiendan?', category: 'Gardner', dimension: 'IP' },
-  { text: '¿Te consideras bueno/a para conectar con personas y hacer amistades?', category: 'Gardner', dimension: 'IP' },
-  
-  // Gardner - Intrapersonal (IA) - 4 preguntas
-  { text: '¿Te gusta reflexionar sobre tus propias emociones y pensamientos?', category: 'Gardner', dimension: 'IA' },
-  { text: '¿Te atrae conocerte mejor a ti mismo/a y entender tu propósito de vida?', category: 'Gardner', dimension: 'IA' },
-  { text: '¿Disfrutas estableciendo metas personales y trabajando en tu desarrollo?', category: 'Gardner', dimension: 'IA' },
-  { text: '¿Te consideras consciente de tus fortalezas y debilidades?', category: 'Gardner', dimension: 'IA' },
-  
-  // Gardner - Naturalista (N) - 4 preguntas
-  { text: '¿Te gusta observar la naturaleza, plantas o animales?', category: 'Gardner', dimension: 'N' },
-  { text: '¿Te atrae estudiar biología, ecología o ciencias ambientales?', category: 'Gardner', dimension: 'N' },
-  { text: '¿Disfrutas actividades al aire libre como camping, senderismo o jardinería?', category: 'Gardner', dimension: 'N' },
-  { text: '¿Te consideras sensible al medio ambiente y a la conservación de la naturaleza?', category: 'Gardner', dimension: 'N' }
+// Opciones estándar para todas las preguntas (escala Likert 1-5)
+export const standardOptions = [
+  { value: 1, label: 'Para nada' },
+  { value: 2, label: 'Poco' },
+  { value: 3, label: 'Neutral' },
+  { value: 4, label: 'Bastante' },
+  { value: 5, label: 'Mucho' }
 ];
+
+// Lista de 62 preguntas adaptadas para estudiantes de secundaria
+export const questionTexts = [
+  // RIASEC - Realista (R) - 5 preguntas
+  { text: '¿Te gusta reparar o arreglar cosas cuando se dañan?', category: 'RIASEC', dimension: 'R' },
+  { text: '¿Prefieres hacer proyectos prácticos como sembrar plantas o construir algo en tecnología?', category: 'RIASEC', dimension: 'R' },
+  { text: '¿Disfrutas las clases en laboratorios o talleres donde usas materiales y herramientas?', category: 'RIASEC', dimension: 'R' },
+  { text: '¿Sientes satisfacción al ayudar en actividades físicas, como deportes o proyectos de limpieza en tu barrio?', category: 'RIASEC', dimension: 'R' },
+  { text: '¿Te interesaría trabajar en profesiones técnicas, agrícolas o mecánicas en el futuro?', category: 'RIASEC', dimension: 'R' },
+
+  // RIASEC - Investigativo (I) - 5 preguntas
+  { text: '¿Te gusta investigar temas nuevos para tus tareas o proyectos escolares?', category: 'RIASEC', dimension: 'I' },
+  { text: '¿Disfrutas experimentar en clase de ciencias, buscando cómo y por qué ocurren cosas?', category: 'RIASEC', dimension: 'I' },
+  { text: '¿Prefieres analizar y resolver problemas matemáticos o científicos?', category: 'RIASEC', dimension: 'I' },
+  { text: '¿Te interesa ver documentales sobre ciencia, tecnología o descubrimientos?', category: 'RIASEC', dimension: 'I' },
+  { text: '¿Te gustaría seguir carreras como medicina, ingeniería, informática o investigación científica?', category: 'RIASEC', dimension: 'I' },
+
+  // RIASEC - Artístico (A) - 5 preguntas
+  { text: '¿Te gusta participar en obras de teatro, festivales musicales o concursos artísticos?', category: 'RIASEC', dimension: 'A' },
+  { text: '¿Prefieres trabajos creativos, como diseñar carteles, pintar o inventar historias?', category: 'RIASEC', dimension: 'A' },
+  { text: '¿Te gusta crear tus propios proyectos artísticos, musicales o audiovisuales?', category: 'RIASEC', dimension: 'A' },
+  { text: '¿Disfrutas expresar tus ideas y emociones a través del arte, la música o la escritura?', category: 'RIASEC', dimension: 'A' },
+  { text: '¿Te interesaría estudiar diseño, arquitectura, música, actuación o literatura?', category: 'RIASEC', dimension: 'A' },
+
+  // RIASEC - Social (S) - 5 preguntas
+  { text: '¿Te gusta ayudar a tus compañeros, apoyar a quienes tienen dificultades, o participar en voluntariados escolares?', category: 'RIASEC', dimension: 'S' },
+  { text: '¿Disfrutas dar tutorías, explicar tareas o motivar a otros en tu grupo?', category: 'RIASEC', dimension: 'S' },
+  { text: '¿Prefieres actividades donde puedes colaborar y convivir con personas?', category: 'RIASEC', dimension: 'S' },
+  { text: '¿Te gusta organizar campañas de ayuda social, convivencias o eventos en tu colegio?', category: 'RIASEC', dimension: 'S' },
+  { text: '¿Te interesan carreras como pedagogía, psicología, trabajo social o enfermería?', category: 'RIASEC', dimension: 'S' },
+
+  // RIASEC - Emprendedor (E) - 5 preguntas
+  { text: '¿Te inspiran a liderar proyectos estudiantiles, grupos de clase o actividades deportivas?', category: 'RIASEC', dimension: 'E' },
+  { text: '¿Te gusta organizar ventas escolares, ferias, o campañas para recolectar fondos?', category: 'RIASEC', dimension: 'E' },
+  { text: '¿Prefieres tomar decisiones rápidas y proponer ideas en reuniones estudiantiles?', category: 'RIASEC', dimension: 'E' },
+  { text: '¿Disfrutas negociar y convencer a otros cuando tienes una meta?', category: 'RIASEC', dimension: 'E' },
+  { text: '¿Visualizas tener un negocio, ser líder comunitario o trabajar en marketing en el futuro?', category: 'RIASEC', dimension: 'E' },
+
+  // RIASEC - Convencional (C) - 5 preguntas
+  { text: '¿Te resulta fácil ordenar tus cuadernos, trabajos y materiales escolares?', category: 'RIASEC', dimension: 'C' },
+  { text: '¿Prefieres seguir instrucciones claras en tus clases o proyectos?', category: 'RIASEC', dimension: 'C' },
+  { text: '¿Te motiva participar en actividades administrativas, como ser secretario en el consejo estudiantil?', category: 'RIASEC', dimension: 'C' },
+  { text: '¿Disfrutas tareas donde puedas organizar información, datos o documentos de manera precisa?', category: 'RIASEC', dimension: 'C' },
+  { text: '¿Te gustaría trabajar en oficinas, bancos, instituciones públicas o contabilidad?', category: 'RIASEC', dimension: 'C' },
+
+  // Gardner - Lingüística (L) - 4 preguntas
+  { text: '¿Te resulta fácil escribir cuentos, mensajes o reflexiones?', category: 'Gardner', dimension: 'L' },
+  { text: '¿Disfrutas leer novelas, revistas o publicaciones?', category: 'Gardner', dimension: 'L' },
+  { text: '¿Te gusta participar en debates, exposiciones o leer en voz alta en clase?', category: 'Gardner', dimension: 'L' },
+  { text: '¿Te identificas expresando tus ideas con precisión al conversar con tus compañeros o familiares?', category: 'Gardner', dimension: 'L' },
+
+  // Gardner - Lógico-Matemática (LM) - 4 preguntas
+  { text: '¿Resuelves rápidamente ejercicios de matemáticas o acertijos en clase?', category: 'Gardner', dimension: 'LM' },
+  { text: '¿Te gusta analizar problemas y buscar soluciones utilizando lógica?', category: 'Gardner', dimension: 'LM' },
+  { text: '¿Te interesan actividades como concursos matemáticos, feria de ciencias o juegos de estrategia?', category: 'Gardner', dimension: 'LM' },
+  { text: '¿Sientes curiosidad al ver noticias sobre tecnología, ciencias o inventos?', category: 'Gardner', dimension: 'LM' },
+
+  // Gardner - Espacial (ES) - 4 preguntas
+  { text: '¿Disfrutas dibujar paisajes, mapas, planos o figuras geométricas visibles en tu entorno?', category: 'Gardner', dimension: 'ES' },
+  { text: '¿Te motiva crear diseños para campañas escolares, redes sociales o instituciones del barrio?', category: 'Gardner', dimension: 'ES' },
+  { text: '¿Imaginas cómo cambiaría un objeto si lo modificas o miras desde otro ángulo?', category: 'Gardner', dimension: 'ES' },
+  { text: '¿Armas fácilmente rompecabezas o modelos tridimensionales?', category: 'Gardner', dimension: 'ES' },
+
+  // Gardner - Musical (M) - 4 preguntas
+  { text: '¿Te gusta cantar o participar en actividades musicales?', category: 'Gardner', dimension: 'M' },
+  { text: '¿Identificas fácilmente ritmos y melodías en la música?', category: 'Gardner', dimension: 'M' },
+  { text: '¿Te interesa tocar instrumentos o crear tu propia música?', category: 'Gardner', dimension: 'M' },
+  { text: '¿Reconoces fácilmente diferentes géneros musicales?', category: 'Gardner', dimension: 'M' },
+
+  // Gardner - Corporal-Kinestésica (CK) - 4 preguntas
+  { text: '¿Te gustan los deportes, el baile o actividades físicas?', category: 'Gardner', dimension: 'CK' },
+  { text: '¿Aprendes mejor haciendo experimentos, manualidades o tareas prácticas?', category: 'Gardner', dimension: 'CK' },
+  { text: '¿Te gusta participar en actividades recreativas, deportes intercolegiales o campeonatos?', category: 'Gardner', dimension: 'CK' },
+  { text: '¿Tienes habilidad para expresar ideas mediante movimientos o gestos en presentaciones escolares?', category: 'Gardner', dimension: 'CK' },
+
+  // Gardner - Interpersonal (IP) - 4 preguntas
+  { text: '¿Colaboras activamente en grupo, creando buen ambiente entre compañeros y profesores?', category: 'Gardner', dimension: 'IP' },
+  { text: '¿Facilitas la solución de conflictos y apoyas a quienes se sienten solos en tu clase?', category: 'Gardner', dimension: 'IP' },
+  { text: '¿Te motiva ayudar a organizar eventos, fiestas escolares o proyectos comunitarios?', category: 'Gardner', dimension: 'IP' },
+  { text: '¿Comprendes bien las emociones y necesidades de las personas a tu alrededor?', category: 'Gardner', dimension: 'IP' },
+
+  // Gardner - Intrapersonal (IA) - 4 preguntas
+  { text: '¿Reflexionas sobre tus metas personales y sueños para el futuro?', category: 'Gardner', dimension: 'IA' },
+  { text: '¿Analizas tus propias fortalezas y debilidades al decidir qué estudiar o en qué participar?', category: 'Gardner', dimension: 'IA' },
+  { text: '¿Prefieres a veces trabajar solo y tomarte tiempo para pensar en tus decisiones?', category: 'Gardner', dimension: 'IA' },
+  { text: '¿Buscas mejorar personalmente en actividades extracurriculares o académicas?', category: 'Gardner', dimension: 'IA' },
+
+  // Gardner - Naturalista (N) - 4 preguntas
+  { text: '¿Te interesa conocer sobre la biodiversidad, animales y plantas?', category: 'Gardner', dimension: 'N' },
+  { text: '¿Participas en proyectos de reciclaje, cuidado ambiental o excursiones?', category: 'Gardner', dimension: 'N' },
+  { text: '¿Reconoces fácilmente tipos de flora y fauna?', category: 'Gardner', dimension: 'N' },
+  { text: '¿Te preocupa el futuro del ambiente y promueves hábitos ecológicos entre tus amigos?', category: 'Gardner', dimension: 'N' }
+];
+
+// Función para insertar las 62 preguntas
+export async function insert62Questions() {
+  console.log('📝 Insertando 62 preguntas del test vocacional...');
+
+  for (let i = 0; i < questionTexts.length; i++) {
+    const questionData = questionTexts[i];
+    await Question.create({
+      text: questionData.text,
+      category: questionData.category,
+      dimension: questionData.dimension,
+      options: standardOptions,
+      order: i + 1,
+      isActive: true
+    });
+  }
+
+  console.log('✅ 62 preguntas insertadas correctamente');
+}
 
 async function updateQuestions() {
   try {
@@ -100,35 +129,13 @@ async function updateQuestions() {
     await sequelize.authenticate();
     console.log('✅ Conectado a la base de datos');
 
-    // Opciones estándar para todas las preguntas (escala Likert 1-5)
-    const standardOptions = [
-      { value: 1, label: 'Para nada' },
-      { value: 2, label: 'Poco' },
-      { value: 3, label: 'Neutral' },
-      { value: 4, label: 'Bastante' },
-      { value: 5, label: 'Mucho' }
-    ];
-
     // Eliminar todas las preguntas existentes
     console.log('🗑️  Eliminando preguntas antiguas...');
     await Question.destroy({ where: {}, truncate: true });
     console.log('✅ Preguntas antiguas eliminadas');
 
-    // Insertar nuevas preguntas
-    console.log('📝 Insertando 62 nuevas preguntas...');
-    for (let i = 0; i < questionTexts.length; i++) {
-      const questionData = questionTexts[i];
-      await Question.create({
-        questionNumber: i + 1,
-        text: questionData.text,
-        category: questionData.category,
-        dimension: questionData.dimension,
-        options: standardOptions,
-        order: i + 1,
-        isActive: true
-      });
-    }
-    console.log('✅ 62 preguntas insertadas correctamente');
+    // Insertar nuevas preguntas usando la función exportada
+    await insert62Questions();
 
     // Verificar conteo
     const total = await Question.count();
@@ -157,4 +164,10 @@ async function updateQuestions() {
   }
 }
 
-updateQuestions();
+// Solo ejecutar si este archivo es el módulo principal (no cuando se importa)
+const __filename = fileURLToPath(import.meta.url);
+const isMainModule = process.argv[1] === __filename;
+
+if (isMainModule) {
+  updateQuestions();
+}

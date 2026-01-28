@@ -49,6 +49,11 @@ const User = sequelize.define('User', {
     type: DataTypes.ENUM('student', 'admin'),
     defaultValue: 'student',
     allowNull: false
+  },
+  activeToken: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    comment: 'Token activo de la sesión actual - solo se permite una sesión activa'
   }
 }, {
   tableName: 'Users',

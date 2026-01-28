@@ -1,46 +1,75 @@
-# Dockerfile para Backend (Node.js + Express)
-FROM node:20-alpine
+# ================================
+# Backend OVP - Dockerfile
+# Sistema de Orientación Vocacional
+# Con Python para ML
+# ================================
 
-# Instalar Python y pip para el servicio ML
+# Etapa 1: Dependencias Node.js
+FROM node:20-alpine AS deps
+
+WORKDIR /app
+
+# Copiar archivos de dependencias
+COPY package*.json ./
+
+# Instalar solo dependencias de producción
+RUN npm ci --only=production && npm cache clean --force
+
+# ================================
+# Etapa 2: Producción con Python
+# ================================
+FROM node:20-alpine AS production
+
+WORKDIR /app
+
+# Instalar Python y dependencias para ML
 RUN apk add --no-cache \
     python3 \
     py3-pip \
     py3-numpy \
     py3-pandas \
-    py3-scikit-learn \
-    && ln -sf python3 /usr/bin/python
+    py3-scikit-learn && \
+    ln -sf python3 /usr/bin/python
 
-# Crear directorio de trabajo
-WORKDIR /app
+# Crear usuario no-root para seguridad
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodeuser -u 1001
 
-# Copiar archivos de dependencias de Node.js
-COPY package*.json ./
+# Copiar dependencias Node.js desde etapa anterior
+COPY --from=deps /app/node_modules ./node_modules
 
-# Instalar dependencias de Node.js
-RUN npm ci --only=production
+# Copiar código fuente (incluyendo modelos ML)
+COPY --chown=nodeuser:nodejs . .
 
-# Copiar requirements.txt del ML
-COPY ml/requirements.txt ./ml/
+# Cambiar a usuario no-root
+USER nodeuser
 
-# Instalar joblib (única dependencia faltante no disponible en Alpine)
-RUN pip3 install --no-cache-dir joblib --break-system-packages
+# ================================
+# Variables de Entorno
+# ================================
+# Servidor (valores por defecto seguros)
+ENV PORT=5000
+ENV NODE_ENV=production
 
-# Copiar código fuente
-COPY . .
+# Python encoding
+ENV PYTHONIOENCODING=utf-8
+ENV PYTHONUNBUFFERED=1
 
-# Copiar y dar permisos al script de entrada
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# Base de Datos PostgreSQL (host y puerto con defaults)
+ENV DB_HOST=database
+ENV DB_PORT=5432
+ENV DB_NAME=ovp_database
+ENV DB_USER=postgres
 
-# Exponer puerto del backend
-EXPOSE 3000
+# CORS Configuration (valores por defecto)
+ENV CORS_ORIGIN=*
+
+# Exponer puerto
+EXPOSE 5000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:5000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
 
-# Usar el script de entrada
-ENTRYPOINT ["docker-entrypoint.sh"]
-
-# Comando para ejecutar
+# Comando de inicio
 CMD ["node", "server.js"]

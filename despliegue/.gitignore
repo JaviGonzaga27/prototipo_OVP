@@ -1,0 +1,9 @@
+# Ignorar archivo .env con secretos reales
+.env
+!.env.example
+
+# Logs
+*.log
+
+# Volúmenes locales (si se montan)
+data/

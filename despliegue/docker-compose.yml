@@ -1,0 +1,103 @@
+services:
+  # ================================
+  # Base de Datos PostgreSQL
+  # ================================
+  database:
+    image: postgres:16-alpine
+    container_name: ovp-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-ovp_database}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD es requerido}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT_EXTERNAL:-5432}:5432"
+    networks:
+      - ovp-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-ovp_database}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ================================
+  # Backend API Node.js
+  # ================================
+  backend:
+    image: oppadev/ovp-backend:latest
+    container_name: ovp-backend
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      # Servidor
+      PORT: 5000
+      NODE_ENV: ${NODE_ENV:-production}
+
+      # Base de Datos
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-ovp_database}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD es requerido}
+
+      # JWT
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET es requerido}
+
+      # CORS
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+      CORS_CREDENTIALS: ${CORS_CREDENTIALS:-false}
+    ports:
+      - "${BACKEND_PORT:-5000}:5000"
+    networks:
+      - ovp-network
+    healthcheck:
+      test: [ "CMD", "node", "-e", "require('http').get('http://localhost:5000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ================================
+  # Frontend React + Vite
+  # ================================
+  frontend:
+    image: oppadev/ovp-frontend:latest
+    container_name: ovp-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:700/api}
+      VITE_PORT: ${VITE_PORT:-3000}
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    networks:
+      - ovp-network
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/" ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+# ================================
+# Volúmenes Persistentes
+# ================================
+volumes:
+  postgres_data:
+    name: ovp_postgres_data 
+    driver: local
+
+# ================================
+# Red Interna
+# ================================
+networks:
+  ovp-network:
+    driver: bridge

@@ -1,27 +1,55 @@
+# ================================
+# Backend OVP - Docker Ignore
+# ================================
+
+# Dependencias (se instalan en el contenedor)
 node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.git
-.gitignore
-*.md
+
+# Archivos de entorno (usar variables de Docker)
 .env
 .env.local
-.env.test
-.DS_Store
-coverage
-.vscode
-.idea
-*.log
-tests
+.env.*.local
+
+# Tests y desarrollo
+tests/
 *.test.js
 jest.config.js
-OVP_API_Collection.postman_collection.json
-POSTMAN_GUIA.md
-RESUMEN_PRUEBAS.md
-ml/__pycache__
-ml/*.pyc
-ml/test_*.py
+coverage/
 
-# IMPORTANTE: NO ignorar los modelos .pkl
-# ml/*.pkl está comentado para permitir la copia de modelos
+# Documentación y archivos extras
+*.md
+!README.md
+docs/
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Editor y IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Archivos temporales
+tmp/
+temp/
+
+# Postman collections
+*.postman_collection.json
+
+# Scripts de desarrollo (opcional, descomenta si no los necesitas en producción)
+# scripts/
