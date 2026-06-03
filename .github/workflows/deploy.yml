@@ -13,12 +13,36 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Build y Deploy
+      - name: Git pull
         run: |
           cd /opt/prototipo_OVP
+          git checkout -- frontend/.env
           git pull origin main
-          cd despliegue
+
+      - name: Detener contenedores
+        run: |
+          cd /opt/prototipo_OVP/despliegue
           docker compose down
-          docker compose up -d --build
-          docker image prune -f
-          echo "✅ Deploy completado"
+
+      - name: Build frontend
+        run: |
+          cd /opt/prototipo_OVP/despliegue
+          docker compose build frontend
+
+      - name: Build backend
+        run: |
+          cd /opt/prototipo_OVP/despliegue
+          docker compose build backend
+
+      - name: Iniciar servicios
+        run: |
+          cd /opt/prototipo_OVP/despliegue
+          docker compose up -d
+
+      - name: Limpiar imágenes
+        run: docker image prune -f
+
+      - name: Verificar estado
+        run: |
+          cd /opt/prototipo_OVP/despliegue
+          docker compose ps
