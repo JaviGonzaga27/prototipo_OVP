@@ -6,43 +6,41 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
-    runs-on: self-hosted
-
+  build:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Git pull
-        run: |
-          cd /opt/prototipo_OVP
-          git checkout -- frontend/.env
-          git pull origin main
+      - name: Login a Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Detener contenedores
+      - name: Build y Push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: jcgonzaga2/ovp-backend:latest
+
+      - name: Build y Push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: jcgonzaga2/ovp-frontend:latest
+          build-args: |
+            VITE_API_URL=http://2.25.162.246:5000/api
+
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: Pull y reiniciar contenedores
         run: |
           cd /opt/prototipo_OVP/despliegue
-          docker compose down
-
-      - name: Build frontend
-        run: |
-          cd /opt/prototipo_OVP/despliegue
-          docker compose build frontend
-
-      - name: Build backend
-        run: |
-          cd /opt/prototipo_OVP/despliegue
-          docker compose build backend
-
-      - name: Iniciar servicios
-        run: |
-          cd /opt/prototipo_OVP/despliegue
+          docker compose pull
           docker compose up -d
-
-      - name: Limpiar imágenes
-        run: docker image prune -f
-
-      - name: Verificar estado
-        run: |
-          cd /opt/prototipo_OVP/despliegue
-          docker compose ps
+          docker image prune -f
