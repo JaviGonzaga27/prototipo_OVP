@@ -32,6 +32,7 @@ jobs:
         with:
           context: ./frontend
           push: true
+          tags: jcgonzaga2/ovp-frontend:latest
           build-args: |
             VITE_API_URL=http://2.25.162.246:5000/api
 
