@@ -110,6 +110,11 @@ const Navbar = () => {
                     icon={UserCircleIcon} 
                     text="Perfil" 
                   />
+                  <NavLink 
+                    to="/settings" 
+                    icon={Cog6ToothIcon} 
+                    text="Configuración" 
+                  />
                   {user.role === 'admin' && (
                     <NavLink 
                       to="/admin" 
