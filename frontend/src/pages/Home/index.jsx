@@ -70,17 +70,14 @@ const Home = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <FeatureCard
-            icon={ClipboardDocumentListIcon}
             title="Completa el Cuestionario"
             description="Responde a preguntas cuidadosamente diseñadas para entender tus intereses, habilidades y aspiraciones profesionales."
           />
           <FeatureCard
-            icon={ChartBarSquareIcon}
             title="Análisis Personalizado"
             description="Nuestro sistema analiza tus respuestas utilizando algoritmos avanzados para identificar tus áreas de mayor potencial."
           />
           <FeatureCard
-            icon={AcademicCapIcon}
             title="Recibe Recomendaciones"
             description="Obtén recomendaciones detalladas de carreras y áreas profesionales que mejor se alineen con tu perfil único."
           />
