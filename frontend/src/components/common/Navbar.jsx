@@ -81,7 +81,7 @@ const Navbar = () => {
                   className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
                 >
                   <ChartBarIcon className="h-8 w-8 text-white" />
-                  <span className="text-white font-bold text-lg">Prototipo OVP</span>
+                  <span className="text-white font-bold text-lg">OVP</span>
                 </button>
                 
                 {/* Enlaces de navegación */}
